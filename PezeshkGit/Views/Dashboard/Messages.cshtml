@@ -1,0 +1,190 @@
+﻿@{
+    ViewBag.Title = "پیام ها";
+    Layout = "~/Views/Shared/_Dashboard.cshtml";
+    var queryId = Request.QueryString["id"];
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="table-view">
+    <table class="table table-bordered table-hover" id="messages">
+        <thead>
+            <tr>
+                <th>عنوان</th>
+                <th>متن پیام</th>
+                <th>ارسال کننده</th>
+                <th>تاریخ</th>
+                <th>وضعیت</th>
+                <th>مشاهده</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(() => {
+        $("#messages").DataTable({
+            "oLanguage": DataTableFA,
+            ajax: {
+                url: "/Api/Message/GetMessages",
+                dataSrc: ""
+            },
+            columns: [
+                {
+                    data: "title",
+                    render: function (data, type, row) {
+                        if (data.length > 30) return data.substr(0, 30) + "...";
+                        else return data;
+                    }
+                },
+                {
+                    data: "content",
+                    render: function (data, type, row) {
+                        if (data.length > 30) return data.substr(0, 30) + "...";
+                        else return data;
+                    }
+                },
+                {
+                    data: "email"
+                },
+                {
+                    data: "time"
+                },
+                {
+                    render: function (data, type, message) {
+                        if (message.readState == false) {
+                            return "خوانده نشده"
+                        }
+                        else return "خوانده شده"
+                    }
+                },
+                {
+                    render: function (data, type, message) {
+                        return "<a class='tableSeeButton' onclick='showMessage(" + message.id + ")'></a>";
+                    }
+                }
+            ],
+            "order": [[4, "desc"], [3, "desc"]],
+            "initComplete": () => { ColorizeRows() }
+        });
+    });
+
+    function ColorizeRows() {
+        let items = $("tr > td:nth-child(5)");
+
+        for (var i = 0; i < items.length; i++) {
+            if ($(items[i]).html() == "خوانده نشده") {
+                $(items[i]).parent("tr").addClass("unread");
+            }
+        }
+    }
+
+    async function showMessage(id) {
+        let item_overlay = $("<div>").addClass("item_overlay").appendTo("body");
+        let show_item = $("<div>").addClass("show_item message").appendTo("body");
+        let view_section = $("<div>").addClass("view-section").appendTo(show_item);
+
+        let values = { FullName: "", Title: "", Content: "", Time: "", Phone: "", ReadState: false, Email: "", ReplyText: "" }
+
+        await $.ajax({
+            url: "/Api/Message/GetMessage?id=" + id,
+            success: (res) => {
+                values.FullName = res.fullName;
+                values.Title = res.title;
+                values.Content = res.content;
+                values.Time = res.time;
+                values.Phone = res.phone;
+                values.ReadState = res.readState;
+                values.Email = res.email;
+                values.ReplyText = res.replyText;
+                if (!res.readState) {
+                    $.ajax({
+                        url: "/Api/Message/UpdateReadState?id=" + id,
+                        method: "PUT",
+                        success: () => { console.log("پیام خوانده شد.") }
+                    });
+                }
+            }
+        });
+
+        $("<span>").addClass("title").html("<strong>عنوان:</strong> " + values.Title).appendTo(view_section);
+        $("<span>").addClass("fullname").html("<strong>نام و نام خانوادگی:</strong> " + values.FullName).appendTo(view_section);
+        $("<span>").addClass("email").html("<strong>ایمیل ارسال کننده:</strong> " + values.Email).appendTo(view_section);
+        $("<span>").addClass("phone").html("<strong>شماره ارسال کننده:</strong> " + values.Phone).appendTo(view_section);
+        $("<span>").addClass("time").html("<strong>تاریخ:</strong> " + values.Time).appendTo(view_section);
+        $("<textarea>").prop("readonly", true).val(values.Content).appendTo(view_section);
+
+        if (values.ReplyText == "") $("<div>").addClass("send-button").html("ارسال پاسخ")
+            .on("click", () => {
+                let anc = $("div.send-button");
+                anc.removeClass("send-button").addClass("send-form").html("");
+
+                $("<label>").attr("for", "content-input").html("متن پاسخ").appendTo(anc);
+                let contentTextArea = $("<textarea>").attr({
+                    "placeholder": "متن پاسخ را وارد کن....", "id": "content-input", "oninput": "Validator(this, 'faq_ans')"
+                }).appendTo(anc);
+
+                let buttonHolder = $("<div>").addClass("button-holder");
+                $("<div>").addClass("send-form-button").html("ارسال").on("click", () => {
+                    bootbox.confirm({
+                        message: "از ارسال پیام مطمئنی؟",
+                        locale: "fa",
+                        callback: (result) => {
+                            if (result) {
+                                var html = "";
+                                var lines = contentTextArea.val().trim().split('\n');
+                                for (var i = 0; i < lines.length; i++) {
+                                    html += lines[i] + "<br />";
+                                }
+                                $.ajax({
+                                    url: "/Api/Message/ReplyMessage?id=" + id,
+                                    method: "POST",
+                                    data: { Content: html, MailTo: values.Email },
+                                    success: () => { closeModal() }
+                                });
+                            }
+                        }
+                    });
+                }).appendTo(buttonHolder);
+
+                $("<div>").addClass("return-button").html("لغو").on("click", () => {
+                    anc.html("ارسال پاسخ").removeClass("send-form").addClass("send-button");
+                    buttonHolder.remove();
+                }).appendTo(buttonHolder);
+
+                anc.parent().append(buttonHolder);
+            }).appendTo(view_section);
+
+        else $("<div>").addClass("send-form").html("پاسخ:<br />" + values.ReplyText.replaceAll("<br />", "\n"))
+            .appendTo(view_section).css("height", "auto");
+
+        $("<img>").addClass("close").attr("src", "../Content/Images/Icons/SVG/close.svg").appendTo(show_item).on("click", () => {
+            closeModal()
+        });
+        item_overlay.addClass("show");
+        show_item.addClass("show");
+    }
+
+    function closeModal() {
+        $(".show_item").removeClass("show");
+        $(".item_overlay").removeClass("show");
+        setTimeout(() => { $(".item_overlay").remove(); $(".show_item").remove() }, 1000);
+        $("#messages").DataTable().ajax.reload(() => {
+            ColorizeRows();
+            let it = $(".chat_count").html();
+
+            if (it != "99+" && it != "0") {
+                let itNum = parseInt(it);
+                $(".chat_count").html(itNum - 1);
+            }
+        });
+    }
+</script>
+
+@if (queryId != null && queryId.IsInt())
+{
+    <script>
+        showMessage(@queryId);
+    </script>
+}

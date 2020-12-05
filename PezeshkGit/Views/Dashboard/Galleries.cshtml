@@ -1,0 +1,303 @@
+﻿@{
+    ViewBag.Title = "گالری";
+    Layout = "~/Views/Shared/_Dashboard.cshtml";
+    var queryId = Request.QueryString["id"];
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="table-view">
+    <a class="newButton" onclick="addGal()"></a>
+    <table class="table table-bordered table-hover gal_table" id="gallery">
+        <thead>
+            <tr>
+                <th>تصویر</th>
+                <th>عنوان</th>
+                <th>توضیحات</th>
+                <th>تاریخ انتشار</th>
+                <th>دسته بندی</th>
+                <th>مدیریت</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    let image_location = "";
+    let can_submit = false;
+
+    $(document).ready(() => {
+        $("#gallery").DataTable({
+            "oLanguage": DataTableFA,
+            ajax: {
+                url: "/Api/Gallery/GetGalleries",
+                dataSrc: ""
+            },
+            columns: [
+                {
+                    data: "url",
+                    render: function (data, type, row) {
+                        return "<img src='/Content/Images/Uploads/Thumb/50/" + data + "' />";
+                    }
+                },
+                {
+                    data: "title",
+                    render: function (data, type, row) {
+                        if (data.length > 20) return data.substr(0, 20) + "...";
+                        else return data;
+                    }
+                },
+                {
+                    data: "description",
+                    render: function (data, type, row) {
+                        if (data.length > 30) return data.substr(0, 30) + "...";
+                        else return data;
+                    }
+                },
+                {
+                    data: "addDate"
+                },
+                {
+                    data: "categories",
+                    render: function (data, type, row) {
+                        data = data.replaceAll("،", "، ");
+                        if (data.length > 30) return data.substr(0, 30) + "...";
+                        else return data;
+                    }
+                },
+                {
+                    render: function (data, type, gallery) {
+                        return "<a class='tableEditButton' onclick='editGal(" + gallery.id + ")'></a>";
+                    }
+                }
+            ],
+            "order": [[3, "desc"]]
+        });
+    });
+
+    function getSelectedCategories() {
+        let cats = "";
+        let inp = document.querySelectorAll("input.catBoxes:checked + label");
+        for (let i = 0; i < inp.length; i++) {
+            if (i + 1 == inp.length) cats += $(inp[i]).html();
+            else cats += $(inp[i]).html() + "،";
+        }
+        return cats;
+    }
+
+    function editGal(id) {
+        createModal(true, () => {
+            if (validateInputs() && $("#stock_img").attr("src").length > 10) {
+                if (!can_submit) {
+                    image_location = $("#stock_img").attr("src").split("Thumb/200/")[1];
+                }
+
+                let formData = {
+                    ID: id,
+                    Title: $("#titleInp").val().trim(),
+                    Description: $("#desInp").val().trim(),
+                    URL: image_location,
+                    Categories: getSelectedCategories()
+                };
+
+                $.ajax({
+                    url: "/Api/Gallery/UpdateGallery?id=" + id,
+                    method: "PUT",
+                    data: formData,
+                    success: () => { closeModal() }
+                });
+            }
+            else bootbox.alert("تمامی فیلد ها رو به درستی پر کنید.", () => { });
+        }, id);
+    }
+
+    function addGal() {
+        createModal(false, () => {
+            if (validateInputs()) {
+                let formData = {
+                    Title: $("#titleInp").val().trim(),
+                    Description: $("#desInp").val().trim(),
+                    URL: image_location,
+                    Categories: getSelectedCategories()
+                };
+
+                $.ajax({
+                    url: "/Api/Gallery",
+                    method: "POST",
+                    data: formData,
+                    success: () => { closeModal() }
+                });
+            }
+            else bootbox.alert("تمامی فیلد ها رو به درستی پر کنید.", () => { });
+        });
+    }
+
+    async function createModal(mode, callBack, id) {
+        let item_overlay = $("<div>").addClass("item_overlay").appendTo("body");
+        let show_item = $("<div>").addClass("show_item gal").appendTo("body");
+        let view_section = $("<div>").addClass("view-section").appendTo(show_item);
+
+        let values = { Title: "", Description: "", Categories: "", URL: "" }
+
+        if (mode) {
+            await $.ajax({
+                url: "/Api/Gallery/GetGallery?id=" + id,
+                success: (res) => {
+                    values.Title = res.title;
+                    values.Description = res.description;
+                    values.Categories = res.categories;
+                    values.URL = res.url;
+                }
+            });
+        }
+
+        let Categories;
+
+        await $.ajax({
+            url: "/Api/Category",
+            success: (res) => {
+                Categories = res;
+            }
+        });
+
+        // InputBox
+        let inp_box1 = $("<div>").addClass("input_box").appendTo(view_section);
+        $("<label>").attr("for", "titleInp").html("عنوان").appendTo(inp_box1);
+        $("<input>").addClass("title").attr({
+            "type": "text", "placeholder": "عنوان تصویر را بنویسید", "id": "titleInp", "oninput": "Validator(this, 'title2')"
+        }).val(values.Title).appendTo(inp_box1).focus();
+
+        // InputBox
+        let inp_box2 = $("<div>").addClass("input_box").appendTo(view_section);
+        $("<label>").attr("for", "desInp").html("توضیحات").appendTo(inp_box2);
+        $("<input>").addClass("des").attr({
+            "type": "text", "placeholder": "توضیحات تصویر را بنویسید", "id": "desInp", "oninput": "Validator(this, 'des')"
+        }).val(values.Description).appendTo(inp_box2);
+
+        // InputBox
+        let inp_box3 = $("<div>").addClass("input_box radio_box cat_chbox").appendTo(view_section);
+        $("<label>").addClass("no-choice").html("دسته بندی ها").appendTo(inp_box3);
+        if (mode) {
+            let galCats = values.Categories.split("،");
+            for (var i = 0; i < Categories.length; i++) {
+                let chinp = $("<input>").attr({ "type": "checkbox", "id": "chbox" + (i + 1) })
+                    .addClass("catBoxes").appendTo(inp_box3);
+                if ($.inArray(Categories[i].title, galCats) != -1) chinp.prop("checked", true);
+                $("<label>").attr("for", "chbox" + (i + 1)).html(Categories[i].title).appendTo(inp_box3);
+            }
+        }
+        else {
+            for (var i = 0; i < Categories.length; i++) {
+                $("<input>").attr({ "type": "checkbox", "id": "chbox" + (i + 1) }).addClass("catBoxes").appendTo(inp_box3);
+                $("<label>").attr("for", "chbox" + (i + 1)).html(Categories[i].title).appendTo(inp_box3);
+            }
+        }
+
+        // InputBox
+        let inp_box4 = $("<div>").addClass("input_box image_box").appendTo(view_section);
+        let box4preview = $("<div>").addClass("preview_pic").appendTo(inp_box4);
+        let previewPTag = $("<p>").html("تصویر مورد نظر را بارگذاری کنید (حداکثر 6MB)").appendTo(box4preview);
+        if (mode && (values.URL != "" || values.URL != null)) {
+            previewPTag.html("تصویر ذخیره شده");
+            $("<img>").attr({ "id": "stock_img", "src": "../Content/Images/Uploads/Thumb/200/" + values.URL }).appendTo(box4preview);
+        }
+
+        $("<label>").attr("for", "gallery_file").html("بارگذاری تصویر").appendTo(inp_box4);
+        $("<input>").attr({ "type": "file", "accept": ".png, .jpeg, .jpg", "id": "gallery_file" }).css("display", "none")
+            .appendTo(inp_box4).on("change", function () {
+                box4preview.children().remove();
+
+                let file = this.files[0];
+                if (file.length === 0) $("<p>").html("تصویر مورد نظر را بارگذاری کنید (حداکثر 6MB)").appendTo(box4preview);
+
+                else {
+                    let para = $("<p>").appendTo(box4preview);
+                    if (validFileType(file)) {
+                        if (file.size < 6291456) {
+                            para.html(`نام تصویر: ${file.name}, حجم تصویر: ${returnFileSize(file.size)}`);
+                            $("<img>").attr("src", URL.createObjectURL(file)).appendTo(box4preview);
+
+                            sendFile(file);
+                        }
+                        else para.html(`نام فایل: ${file.name} حجم فایل بیشتر از 6MB میباشد.`);
+                    }
+                    else para.html(`نام فایل: ${file.name} فایل معتبر نمیباشد دوباره تلاش کنید.`);
+                }
+            });
+
+        $("<input>").addClass("changeit_button").attr("type", "button").val("ثبت").on("click", callBack).appendTo(view_section);
+
+        if (mode) {
+            $("<input>").addClass("deleteit_button").attr("type", "button").val("حذف").on("click", () => {
+                bootbox.confirm({
+                    message: "از حذف تصویر مطمئنی؟",
+                    locale: "fa",
+                    callback: (result) => {
+                        if (result) {
+                            $.ajax({
+                                url: "/Api/Gallery?id=" + id,
+                                method: "DELETE",
+                                success: () => { closeModal() }
+                            });
+                        }
+                    }
+                });
+            }).appendTo(view_section);
+        }
+
+        $("<img>").addClass("close").attr("src", "../Content/Images/Icons/SVG/close.svg").appendTo(show_item).on("click", () => {
+            closeModal();
+        });
+        item_overlay.addClass("show");
+        show_item.addClass("show");
+    }
+
+    function sendFile(file) {
+        var fdata = new FormData();
+        fdata.append('file', $("#gallery_file")[0].files[0]);
+
+        // Ajax
+        $.ajax({
+            url: "/ImageUploader.ashx",
+            method: "POST",
+            data: fdata,
+            contentType: false,
+            processData: false,
+            success: (res) => {
+                image_location = res;
+                can_submit = true;
+            }
+        });
+    }
+
+    function validFileType(file) {
+        return ["image/jpg", "image/jpeg", "image/png"].includes(file.type);
+    }
+
+    function returnFileSize(number) {
+        if (number < 1024) return number + 'bytes';
+        else if (number >= 1024 && number < 1048576) return (number / 1024).toFixed(1) + 'KB';
+        else if (number >= 1048576) return (number / 1048576).toFixed(1) + 'MB';
+    }
+
+    function validateInputs() {
+        if (Validator($("#titleInp"), "title2") && Validator($("#desInp"), "des") && getSelectedCategories() != "" && can_submit)
+            return true;
+        return false;
+    }
+
+    function closeModal() {
+        $(".show_item").removeClass("show");
+        $(".item_overlay").removeClass("show");
+        setTimeout(() => { $(".item_overlay").remove(); $(".show_item").remove() }, 1000);
+        $("#gallery").DataTable().ajax.reload();
+    }
+</script>
+
+@if (queryId != null && queryId.IsInt())
+{
+    <script>
+        editGal(@queryId);
+    </script>
+}

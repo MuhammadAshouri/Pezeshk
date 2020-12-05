@@ -1,0 +1,327 @@
+﻿@media screen and (max-width: 1300px) {
+    #header > .holder {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .jplist_section {
+        width: 100%;
+    }
+
+    .aboutGallery,
+    .aboutpage,
+    .about_section {
+        width: 100%;
+        margin-bottom: 50px;
+    }
+
+        .aboutpage > .right {
+            padding-right: 30px;
+        }
+
+    .splide.inabout {
+        width: calc(95% - 60px);
+    }
+
+    .fast_menu {
+        width: 800px;
+    }
+
+        .fast_menu > div:nth-child(1),
+        .fast_menu > div:nth-child(2) {
+            display: none;
+        }
+}
+
+@media screen and (max-width: 1100px) {
+    .splide {
+        width: calc(95% - 60px);
+    }
+    #contentSection {
+        width: 95%;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .aboutpage > .left > img,
+    .about_section > .right > img {
+        width: 80%;
+    }
+
+    .feedback_section {
+        width: 95%;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .jplist_section > .controls > .text_filter.twoInp {
+        margin: 10px 0;
+        float: unset;
+    }
+
+    .jplist_section > .controls > .mypagination.twoInp {
+        float: unset;
+    }
+
+    .faq_box {
+        width: 95%;
+    }
+    .show_item {
+        width: 100%;
+        left: 0;
+        margin-left: 0;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .fast_menu {
+        width: 95%;
+        padding: 30px 10px;
+        height: 120px;
+    }
+
+    .feedback_section > .left.left_img {
+        display: none;
+    }
+
+    .feedback_section > .left {
+        float: unset;
+        width: 70%;
+        margin: auto;
+    }
+
+    .feedback_section > .right {
+        width: 80%;
+        float: unset;
+        margin: auto;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .aboutpage > .left,
+    .about_section > .right {
+        width: 40%;
+    }
+
+    .aboutpage > .right,
+    .about_section > .left {
+        width: 55%;
+    }
+
+    .aboutpage > .left > img,
+    .about_section > .right > img {
+        width: 90%;
+    }
+
+    .jplist_section > .controls > .text_filter {
+        margin: 10px 0;
+        float: unset;
+    }
+
+    .jplist_section > .controls > .mypagination {
+        float: unset;
+    }
+
+    .gal_section > .content {
+        margin: 20px 0;
+    }
+
+    .jplist_section > .controls {
+        height: 140px;
+    }
+
+    .gal_section > .content > .items {
+        flex-basis: 30%;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .other_section > .table > .rows,
+    .other_section > .table > .header {
+        width: 700px;
+    }
+
+    .show_item > img.gal_image {
+        width: 70%;
+        max-width: 100%;
+        float: unset;
+        margin: 40px auto 0;
+    }
+
+    .show_item > .textBox {
+        margin: 0;
+        float: unset;
+    }
+
+    .show_item > .view-section {
+        width: 100%;
+        box-shadow: none;
+    }
+
+    #contentSection {
+        margin: 50px auto;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    fast_menu,
+    .aboutpage > .left,
+    .about_section > .right {
+        display: none;
+    }
+
+    .aboutpage > .right,
+    .about_section > .left {
+        width: 90%;
+        margin: auto;
+    }
+
+    .gal_section > .content > .items {
+        flex-basis: 46%;
+    }
+
+    .feedback_section > .left,
+    .feedback_section > .right {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    #header {
+        display: none;
+    }
+
+    .responsive_menu_open {
+        display: block;
+    }
+
+    .aboutGallery > .des + a,
+    .about_section > .left > a {
+        margin-top: 30px;
+    }
+
+    .about_section {
+        padding-bottom: 0;
+        height: 350px;
+    }
+
+    .menu.mfooter > li > a {
+        line-height: 35px;
+        display: block;
+    }
+
+    .jplist_section > .controls > .text_filter.twoInp > input:last-child,
+    .jplist_section > .controls > .text_filter.twoInp > input,
+    .menu.mfooter > li {
+        flex: unset;
+        width: 100%;
+    }
+
+        .menu.mfooter > li:last-child,
+        .menu.mfooter > li:first-child {
+            margin: 0;
+        }
+
+    .footer {
+        height: auto;
+        padding: 10px 0;
+    }
+
+    .gal_section > .content > .items {
+        flex-basis: 100%;
+    }
+
+    .jplist_section > .controls > .text_filter.twoInp {
+        width: 100%;
+    }
+
+    .show_item > .view-section > .send-form,
+    .show_item > .view-section > textarea {
+        width: 100%;
+        padding: 0;
+    }
+
+    .show_item > .view-section > .button-holder {
+        width: 80%;
+    }
+
+    #pubInp + label {
+        margin-right: 0;
+        padding-right: 0;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .jplist_section > .controls {
+        height: 190px;
+    }
+
+        .jplist_section > .controls > .text_filter,
+        .jplist_section > .controls > .mypagination > .jplist-dd {
+            margin: 10px 0;
+            width: 100%;
+        }
+
+    .show_item > img.gal_image,
+    .menu {
+        width: 100%;
+    }
+
+    .show_item > .view-section {
+        padding: 0;
+    }
+
+    .view-section .changeit_button {
+        width: 70%;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .aboutpage > .right > .first > span,
+    .about_section > .left > .first > span {
+        font-size: 11px;
+    }
+
+    .aboutpage > .right > .first > h2,
+    .about_section > .left > .first > h2 {
+        font-size: 26px;
+    }
+
+    .aboutpage > .right > span,
+    .about_section > .left > span {
+        font-size: 12px;
+    }
+
+    .aboutpage > .right > ul > li,
+    .about_section > .left > ul > li {
+        font-size: 11px;
+    }
+
+    .feedback_section > .right > input {
+        margin: 10px 0;
+        width: 100%;
+    }
+
+    .aboutpage > .right > ul {
+        padding-right: 20px;
+    }
+
+    .aboutpage > .right > ul > li {
+        line-height: 25px;
+    }
+
+    .aboutpage > .right > ul > li:before {
+        top: 15px;
+    }
+    
+    .login {
+        width: 90%;
+    }
+}
+
+@media screen and (max-width: 350px) {
+    .auth_ok {
+        text-align: left;
+    }
+}

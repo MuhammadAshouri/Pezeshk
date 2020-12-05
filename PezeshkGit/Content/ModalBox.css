@@ -1,0 +1,308 @@
+﻿.item_overlay {
+    background: radial-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5));
+    position: fixed;
+    transition: 1s;
+    z-index: 10000;
+    height: 100vh;
+    width: 100vw;
+    opacity: 0;
+    left: 0;
+    top: 0;
+}
+
+    .item_overlay.show {
+        opacity: 1;
+    }
+
+.show_item {
+    background: #fff;
+    position: fixed;
+    z-index: 10001;
+    height: 100vh;
+    width: 900px;
+    left: 50%;
+    margin-left: -450px;
+    padding: 20px;
+    top: -110vh;
+    border-radius: 10px;
+    overflow: auto;
+    transition: 1s;
+}
+
+    .show_item.show {
+        top: 0;
+    }
+
+    .show_item.cat {
+        width: 400px;
+        left: 50%;
+        height: auto;
+        margin-left: -200px;
+    }
+
+        .show_item.cat.show {
+            top: 100px;
+        }
+
+    .show_item > img.close {
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        transition: 0.3s;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }
+
+    .show_item > img.gal_image {
+        min-width: 30%;
+        width: 49.9%;
+        max-width: 50%;
+        float: right;
+        margin-top: 40px;
+        border-radius: 10px;
+        display: block;
+    }
+
+    .show_item > .textBox {
+        float: right;
+        margin: 40px 20px 0 0;
+        width: 47%;
+    }
+
+        .show_item > .textBox > span {
+            display: block;
+            line-height: 60px;
+        }
+
+        .show_item > .textBox > .title {
+            color: #000;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .show_item > .textBox > .des {
+            line-height: 30px;
+            font-size: 15px;
+            word-wrap: break-word;
+            max-width: 100%;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+    .show_item > .view-section {
+        box-sizing: border-box;
+        background: #fff;
+        margin: 20px auto;
+        height: auto;
+        padding: 20px;
+        width: 80%;
+        border-radius: 20px;
+        box-shadow: rgba(0, 0, 0, 0.2) 0 0 10px;
+    }
+
+        .show_item > .view-section > span {
+            display: block;
+            line-height: 30px;
+        }
+
+        .show_item > .view-section > textarea {
+            max-width: 100%;
+            min-width: 50%;
+            min-height: 150px;
+        }
+
+        .show_item > .view-section > .send-button {
+            width: 200px;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 20px;
+            margin: 10px auto;
+            text-align: center;
+            text-decoration: none;
+            color: #222;
+            background: linear-gradient(60deg, #66bb6a, #43a047);
+            cursor: pointer;
+            transition: 0.5s;
+        }
+
+            .show_item > .view-section > .send-button:hover {
+                box-shadow: rgba(0, 0, 0, 0.5) 0 0 10px;
+            }
+
+        .show_item > .view-section > .send-form {
+            box-sizing: border-box;
+            margin: 10px auto;
+            transition: 0.5s;
+            padding: 10px;
+            width: 90%;
+            height: 250px;
+        }
+
+            .show_item > .view-section > .send-form > label {
+                display: block !important;
+            }
+
+            .show_item > .view-section > .send-form > textarea {
+                width: 100%;
+                height: 200px;
+                resize: none;
+            }
+
+        .show_item > .view-section > .button-holder {
+            flex-wrap: wrap;
+            display: flex;
+            margin: auto;
+            width: 50%;
+        }
+
+            .show_item > .view-section > .button-holder > div {
+                background: #43a047;
+                text-align: center;
+                border-radius: 20px;
+                line-height: 30px;
+                cursor: pointer;
+                margin: 1px;
+                flex: 2;
+            }
+
+                .show_item > .view-section > .button-holder > div:last-child {
+                    background: rgba(255, 0, 0, 0.6);
+                    flex: 1;
+                }
+
+.input_box > label {
+    margin: 30px 30px 10px 0;
+    font-size: 14px;
+    display: block;
+    color: #333;
+}
+
+.image_box,
+.input_box > select,
+.input_box > textarea,
+.input_box > input {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    font-family: "vazir";
+    border-radius: 20px;
+    padding: 0 10px;
+    line-height: 40px;
+    font-size: 13px;
+    border: 0 none;
+    display: block;
+    margin: 0 20px;
+    width: calc(100% - 40px);
+    max-width: none;
+}
+
+.input_box > textarea {
+    min-height: 200px;
+    max-width: calc(100% - 40px);
+    min-width: 50%;
+    line-height: 30px;
+    padding: 15px;
+}
+
+.input_box > select {
+    border-radius: 0 20px 20px 0;
+    padding: 10px;
+    width: 50%;
+}
+
+    .input_box > select > option {
+        font-size: 15px;
+    }
+
+.radio_box > label {
+    background: url("Images/Icons/SVG/untik.svg") no-repeat 10% 50%;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    background-size: 20px;
+    padding: 10px;
+    padding-left: 35px;
+}
+
+.radio_box.just_one > label {
+    width: 150px;
+    cursor: pointer;
+}
+
+.cat_chbox > label {
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 10px;
+    cursor: pointer;
+}
+
+.radio_box > label.no-choice {
+    background: none;
+    border: 0;
+    display: block;
+    margin-bottom: -10px;
+    cursor: default;
+    margin-top: 30px;
+}
+
+.radio_box > input:checked + label,
+.radio_box > input:checked + input + label {
+    background-image: url("Images/Icons/SVG/tik.svg");
+}
+
+.catBoxes {
+    display: none !important;
+}
+
+.image_box {
+    width: calc(100% - 40px);
+    margin: 30px 20px;
+    padding: 10px;
+}
+
+    .image_box > .preview_pic {
+        margin: auto;
+        text-align: center;
+    }
+
+        .image_box > .preview_pic > img {
+            width: 60%;
+        }
+
+    .image_box > label,
+    .view-section .changeit_button,
+    .view-section .deleteit_button {
+        background: linear-gradient(60deg, #66bb6a, #43a047);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        font-family: "Vazir";
+        border-radius: 20px;
+        margin: 30px auto 10px;
+        text-align: center;
+        line-height: 40px;
+        cursor: pointer;
+        font-size: 14px;
+        display: block;
+        border: 0 none;
+        width: 50%;
+    }
+
+    .image_box > label {
+        width: 130px;
+        font-weight: 500;
+        color: #222;
+    }
+
+.cat .view-section .changeit_button,
+.cat .view-section .deleteit_button {
+    width: calc(100% - 40px);
+}
+
+.view-section .deleteit_button {
+    background: linear-gradient(60deg, rgba(198, 20, 20, 0.82), rgba(219, 42, 42, 0.82));
+    margin-top: 0;
+}
+
+.modal {
+    z-index: 10002 !important;
+}

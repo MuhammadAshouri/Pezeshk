@@ -1,0 +1,221 @@
+﻿@{
+    ViewBag.Title = "مدیران";
+    Layout = "~/Views/Shared/_Dashboard.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="table-view">
+    <a class="newButton" onclick="addAdmin()"></a>
+    <table class="table table-bordered table-hover" id="admins">
+        <thead>
+            <tr>
+                <th>نام کاربری</th>
+                <th>ایمیل</th>
+                <th>نوع</th>
+                <th>تاریخ شروع</th>
+                <th>آخرین ورود</th>
+                <th>مدیریت</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(() => {
+        $("#admins").DataTable({
+            "oLanguage": DataTableFA,
+            ajax: {
+                url: "/Api/Account/GetAdmins",
+                dataSrc: ""
+            },
+            columns: [
+                {
+                    data: "username"
+                },
+                {
+                    data: "email"
+                },
+                {
+                    data: "adminType",
+                    render: function (data, type, admin) {
+                        if (data == "1") return "مدیر بلاگ";
+                        else if (data == "2") return "منشی";
+                        else return "نامعتبر"
+                    }
+                },
+                {
+                    data: "addDate"
+                },
+                {
+                    data: "lastLogin"
+                },
+                {
+                    render: function (data, type, admin) {
+                        return "<a class='tableEditButton' onclick='editAdmin(" + admin.id + ")'></a>";
+                    }
+                }
+            ],
+            "order": [[4, "desc"]]
+        });
+    });
+
+    function editAdmin(id) {
+        createModal(true, () => {
+            if (validateInput()) {
+                let formData = {
+                    ID: id,
+                    Username: $("#unameInp").val().trim(),
+                    Email: $("#emailInp").val().trim(),
+                    AdminType: $("#typesInp").children("option:selected").val()
+                };
+
+                if ($("#passInp").val().trim() != "" && $("#repassInp").val().trim() != "") {
+                    if (Validator($("#passInp"), "password") && Validator($("#repassInp"), "repass")) {
+                        formData = {
+                            ID: id,
+                            Username: formData.Username,
+                            Email: formData.Email,
+                            AdminType: formData.AdminType,
+                            Password: $("#passInp").val().trim()
+                        }
+                    }
+                }
+                    
+                $.ajax({
+                    url: "/Api/Account?id=" + id,
+                    method: "PUT",
+                    data: formData,
+                    success: () => { closeModal() }
+                });
+            }
+            else bootbox.alert("تمامی فیلد ها رو به درستی پر کنید.", () => { });
+        }, id);
+    }
+
+    function addAdmin() {
+        createModal(false, () => {
+            if (validateInput() && Validator($("#passInp"), "password") && Validator($("#repassInp"), "repass")) {
+                let formData = {
+                    Username: $("#unameInp").val().trim(),
+                    Password: $("#passInp").val().trim(),
+                    Email: $("#emailInp").val().trim(),
+                    AdminType: $("#typesInp").children("option:selected").val()
+                };
+
+                $.ajax({
+                    url: "/Api/Account",
+                    method: "POST",
+                    data: formData,
+                    success: () => { closeModal() }
+                });
+            }
+            else bootbox.alert("تمامی فیلد ها رو به درستی پر کنید.", () => { });
+        });
+    }
+
+    async function createModal(mode, callBack, id) {
+        let item_overlay = $("<div>").addClass("item_overlay").appendTo("body");
+        let show_item = $("<div>").addClass("show_item post").appendTo("body");
+        let view_section = $("<div>").addClass("view-section").appendTo(show_item);
+
+        let values = { Username: "", Email: "", AdminType: "", AddDate: "", LastLogin: "" }
+
+        if (mode) {
+            await $.ajax({
+                url: "/Api/Account?id=" + id,
+                success: (res) => {
+                    values.Username = res.username;
+                    values.Email = res.email;
+                    values.AdminType = res.adminType;
+                    values.AddDate = res.addDate;
+                    values.LastLogin = res.lastLogin;
+                }
+            });
+        }
+
+        // InputBox
+        let inp_box1 = $("<div>").addClass("input_box").appendTo(view_section);
+        $("<label>").attr("for", "unameInp").html("نام کاربری").appendTo(inp_box1);
+        $("<input>").addClass("uname").attr({
+            "type": "text", "placeholder": "نام کاربری را بنویسید", "id": "unameInp", "oninput": "Validator(this, 'uname')"
+        }).val(values.Username).appendTo(inp_box1).focus();
+
+        $("<span>").html("*اگر مایل به تغییر گذرواژه هستید فیلد های مربوطه را پر کنید. در غیر این صورت خالی بگذارید.")
+            .appendTo(view_section).css({ "color": "darkred", "margin": "10px 30px -20px 0" });
+
+        // InputBox
+        let inp_box4 = $("<div>").addClass("input_box").appendTo(view_section);
+        $("<label>").attr("for", "passInp").html("گذرواژه").appendTo(inp_box4);
+        $("<input>").addClass("pass").attr({
+            "type": "password", "placeholder": "گذرواژه را بنویسید", "id": "passInp", "oninput": "Validator(this, 'password')"
+        }).appendTo(inp_box4);
+        $("<span>").addClass("passHint").html("گذرواژه باید شامل حداقل یک عدد، یک حرف کوچک و بزرگ انگلیسی باشد!")
+            .appendTo(inp_box4);
+
+        // InputBox
+        let inp_box5 = $("<div>").addClass("input_box").appendTo(view_section);
+        $("<label>").attr("for", "repassInp").html("تکرار گذرواژه").appendTo(inp_box5);
+        $("<input>").addClass("pass").attr({
+            "type": "password", "placeholder": "گذرواژه را تکرار کنید", "id": "repassInp", "oninput": "Validator(this, 'repass')"
+        }).appendTo(inp_box5);
+
+        // InputBox
+        let inp_box2 = $("<div>").addClass("input_box").appendTo(view_section);
+        $("<label>").attr("for", "emailInp").html("ایمیل").appendTo(inp_box2);
+        $("<input>").addClass("email").attr({
+            "type": "text", "placeholder": "ایمیل را بنویسید", "id": "emailInp", "oninput": "Validator(this, 'email')"
+        }).val(values.Email).appendTo(inp_box2);
+
+        // InputBox
+        let inp_box3 = $("<div>").addClass("input_box").appendTo(view_section);
+        $("<label>").attr("for", "typesInp").html("نوع").appendTo(inp_box3);
+        let selInp = $("<select>").addClass("des").attr({ "id": "typesInp" }).appendTo(inp_box3);
+        let blogOpt = $("<option>").html("مدیر بلاگ").appendTo(selInp);
+        let secOpt = $("<option>").html("منشی").appendTo(selInp);
+
+        if (mode) {
+            if (values.AdminType == 1) blogOpt.prop("selected", true);
+            if (values.AdminType == 2) secOpt.prop("selected", true);
+        }
+
+        $("<input>").addClass("changeit_button").attr("type", "button").val("ثبت").on("click", callBack).appendTo(view_section);
+
+        if (mode) {
+            $("<input>").addClass("deleteit_button").attr("type", "button").val("حذف").on("click", () => {
+                bootbox.confirm({
+                    message: "از حذف ادمین مطمئنی؟",
+                    locale: "fa",
+                    callback: (result) => {
+                        if (result) {
+                            $.ajax({
+                                url: "/Api/Account?id=" + id,
+                                method: "DELETE",
+                                success: () => { closeModal() }
+                            });
+                        }
+                    }
+                });
+            }).appendTo(view_section);
+        }
+
+        $("<img>").addClass("close").attr("src", "../Content/Images/Icons/SVG/close.svg").appendTo(show_item).on("click", () => {
+            closeModal()
+        });
+        item_overlay.addClass("show");
+        show_item.addClass("show");
+    }
+
+    function closeModal() {
+        $(".show_item").removeClass("show");
+        $(".item_overlay").removeClass("show");
+        setTimeout(() => { $(".item_overlay").remove(); $(".show_item").remove() }, 1000);
+        $("#admins").DataTable().ajax.reload();
+    }
+
+    function validateInput() {
+        if (Validator($("#unameInp"), "uname") && Validator($("#emailInp"), "email")) return true;
+        return false;
+    }
+</script>

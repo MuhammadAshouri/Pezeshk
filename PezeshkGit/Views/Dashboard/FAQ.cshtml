@@ -1,0 +1,139 @@
+﻿@model Pezeshk.Models.Message
+@{
+    ViewBag.Title = "سوالات متداول";
+    Layout = "~/Views/Shared/_Dashboard.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="table-view">
+    <a class="newButton" onclick="addFAQ()"></a>
+    <table class="table table-bordered table-hover" id="faq">
+        <thead>
+            <tr>
+                <th>سوال</th>
+                <th>متن پیام</th>
+                <th>مشاهده</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(() => {
+        $("#faq").DataTable({
+            "oLanguage": DataTableFA,
+            ajax: {
+                url: "/Api/FAQ",
+                dataSrc: ""
+            },
+            columns: [
+                {
+                    data: "question",
+                    render: function (data, type, row) {
+                        if (data.length > 50) return data.substr(0, 50) + "...";
+                        else return data;
+                    }
+                },
+                {
+                    data: "answer",
+                    render: function (data, type, row) {
+                        if (data.length > 50) return data.substr(0, 50) + "...";
+                        else return data;
+                    }
+                },
+                {
+                    render: function (data, type, row) {
+                        return "<a class='tableEditButton' onclick='editFAQ(" + row.id + ")'></a>";
+                    }
+                }
+            ]
+        });
+    });
+
+    async function createModal(mode, callBack, id) {
+        let item_overlay = $("<div>").addClass("item_overlay").appendTo("body");
+        let show_item = $("<div>").addClass("show_item faq").appendTo("body");
+        let view_section = $("<div>").addClass("view-section").appendTo(show_item);
+
+        let values = { Ques: "", Ans: "" }
+
+        if (mode) {
+            await $.ajax({
+                url: "/Api/FAQ?id=" + id,
+                success: (res) => {
+                    values.Ques = res.question;
+                    values.Ans = res.answer;
+                }
+            });
+        }
+
+        // InputBox
+        let inp_box1 = $("<div>").addClass("input_box").appendTo(view_section);
+        $("<label>").attr("for", "quesInp").html("سوال").appendTo(inp_box1);
+        $("<input>").addClass("title").attr({
+            "type": "text", "placeholder": "سوال را بنویسید", "id": "quesInp", "oninput": "Validator(this, 'faq_ques')"
+        }).val(values.Ques).appendTo(inp_box1).focus();
+
+        // InputBox
+        let inp_box2 = $("<div>").addClass("input_box").appendTo(view_section);
+        $("<label>").attr("for", "ansInp").html("پاسخ").appendTo(inp_box2);
+        $("<textarea>").attr({ "id": "ansInp", "placeholder": "پاسخ را بنویسید", "oninput": "Validator(this, 'faq_ans')" })
+            .val(values.Ans).appendTo(inp_box2);
+
+        $("<input>").addClass("changeit_button").attr("type", "button").val("ثبت").on("click", callBack).appendTo(view_section);
+
+        if (mode) {
+            $("<input>").addClass("deleteit_button").attr("type", "button").val("حذف").on("click", () => {
+                bootbox.confirm({
+                    message: "از حذف سوال مطمئنی؟",
+                    locale: "fa",
+                    callback: (result) => {
+                        if (result) {
+                            $.ajax({
+                                url: '/Api/FAQ?id=' + id,
+                                method: "DELETE",
+                                success: () => { closeModal() }
+                            });
+                        }
+                    }
+                });
+            }).appendTo(view_section);
+        }
+
+        $("<img>").addClass("close").attr("src", "../Content/Images/Icons/SVG/close.svg").appendTo(show_item)
+            .on("click", () => { closeModal() });
+        item_overlay.addClass("show");
+        show_item.addClass("show");
+    }
+
+    function closeModal() {
+        $(".show_item").removeClass("show");
+        $(".item_overlay").removeClass("show");
+        setTimeout(() => { $(".item_overlay").remove(); $(".show_item").remove() }, 1000);
+        $("#faq").DataTable().ajax.reload();
+    }
+
+    function addFAQ() {
+        createModal(false, () => {
+            $.ajax({
+                url: '/Api/FAQ',
+                method: "POST",
+                data: { question: $("#quesInp").val().trim(), answer: $("#ansInp").val().trim() },
+                success: () => { closeModal() }
+            });
+        });
+    }
+
+    function editFAQ(id) {
+        createModal(true, () => {
+            $.ajax({
+                url: '/Api/FAQ?id=' + id,
+                method: "PUT",
+                data: { id: id, question: $("#quesInp").val().trim(), answer: $("#ansInp").val().trim() },
+                success: () => { closeModal() }
+            });
+        }, id);
+    }
+</script>

@@ -1,0 +1,65 @@
+﻿@media screen and (min-width: 1300px) {
+    .mypanel > .right {
+        right: 0 !important;
+    }
+
+    .menu_res_close,
+    .menu_res {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 1300px) {
+    .menu_res {
+        display: block;
+    }
+
+    .mypanel > .left {
+        width: 100vw;
+    }
+
+        .mypanel > .left > h2 {
+            margin-right: 20px;
+        }
+}
+
+@media screen and (max-width: 900px) {
+    .table {
+        width: 860px;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .left > .panel_items {
+        padding: 5px;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .left > .panel_items > .item {
+        width: 800px;
+    }
+
+    .show_item > .view-section {
+        width: 100%;
+        box-shadow: none;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .show_item > .view-section {
+        padding: 0;
+    }
+    
+    .show_item.cat {
+        width: 100%;
+        margin-left: 0;
+        left: 0;
+    }
+
+    .image_box > label,
+    .view-section .changeit_button,
+    .view-section .deleteit_button {
+        width: 70%;
+    }
+}

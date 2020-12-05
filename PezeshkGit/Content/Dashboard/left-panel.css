@@ -1,0 +1,245 @@
+﻿.mypanel > .left {
+    width: calc(100vw - 270px);
+    box-sizing: border-box;
+    transition: 0.5s;
+    overflow: auto;
+    height: 100vh;
+    float: left;
+}
+
+.left > .header {
+    position: relative;
+    height: 50px;
+}
+
+    .left > .header > a.nav {
+        display: inline-block;
+        text-decoration: none;
+        font-size: 15px;
+        color: #222;
+        margin: 20px;
+    }
+
+    .left > .header > a.chat {
+        background: url("../Images/Icons/SVG/message.svg") no-repeat;
+        background-size: 40px;
+        text-decoration: none;
+        position: fixed;
+        color: #fff;
+        height: 40px;
+        width: 40px;
+        left: 30px;
+        top: 15px;
+    }
+
+        .left > .header > a.chat > .chat_count {
+            border-radius: 100%;
+            position: relative;
+            text-align: center;
+            line-height: 22px;
+            background: red;
+            font-size: 9px;
+            display: block;
+            direction: ltr;
+            height: 20px;
+            width: 20px;
+            right: -10px;
+        }
+
+.left > .table-view {
+    box-sizing: border-box;
+    position: relative;
+    padding: 20px;
+}
+
+    .left > .table-view > a.newButton {
+        display: block;
+        position: fixed;
+        width: 40px;
+        height: 40px;
+        top: 60px;
+        left: 30px;
+        background: url("../Images/Icons/SVG/add.svg") no-repeat 50% 50%;
+        background-size: 40px;
+        font-size: 0;
+        z-index: 10000;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+
+        .left > .table-view > a.newButton:hover {
+            transform: rotate(180deg);
+        }
+
+.menu_res_close,
+.menu_res {
+    background: url("../Images/Icons/SVG/menu.svg") no-repeat;
+    display: inline-block;
+    background-size: 40px;
+    border-radius: 100%;
+    position: absolute;
+    transition: 1s;
+    display: none;
+    height: 40px;
+    width: 40px;
+    z-index: 1000;
+    right: 15px;
+    top: 15px;
+}
+
+.menu_res_close {
+    position: fixed;
+    background-image: url("../Images/Icons/SVG/close.svg");
+}
+
+.left > .panel_items {
+    box-sizing: border-box;
+    margin-top: 30px;
+    padding: 60px;
+    width: 100%;
+}
+
+.panel_items > .item {
+    box-shadow: 0 0 10px #ccc;
+    margin: 0 20px 80px 20px;
+    border-radius: 10px;
+    position: relative;
+    background: #fff;
+    padding: 10px;
+}
+
+    .panel_items > .item > h4 {
+        font-size: 13px;
+        color: #666;
+        margin: 4px;
+        padding: 0;
+    }
+
+    .panel_items > .item > img {
+        background: linear-gradient(60deg, #66bb6a, #43a047);
+        border-radius: 10px;
+        position: absolute;
+        display: block;
+        padding: 10px;
+        height: 70px;
+        width: 70px;
+        top: -25px;
+        left: 15px;
+    }
+
+    .panel_items > .item > span {
+        margin-bottom: 10px;
+        text-indent: 20px;
+        line-height: 45px;
+        font-size: 14px;
+        display: block;
+    }
+
+    .panel_items > .item > a {
+        border-top: 1px solid #ccc;
+        width: calc(100% - 40px);
+        text-decoration: none;
+        position: absolute;
+        line-height: 28px;
+        font-size: 12px;
+        display: block;
+        direction: ltr;
+        bottom: 2px;
+        left: 20px;
+    }
+
+    .panel_items > .item > .holder {
+        border: 1px solid #ccc;
+        min-height: 200px;
+        display: flex;
+        flex-wrap: wrap;
+        margin: 20px;
+        padding: 5px;
+        box-sizing: border-box;
+    }
+
+        .panel_items > .item > .holder > .item {
+            flex: 1;
+            border: 1px solid #ccc;
+            height: 200px;
+            margin: 0 2.5px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .panel_items > .item > .holder > .item:after {
+                content: '';
+                width: 100%;
+                height: 100%;
+                background: rgba(196, 196, 196, 0.9);
+                display: block;
+                transition: 0.5s;
+                position: absolute;
+                top: 125%;
+                left: 0;
+                text-align: center;
+                line-height: 200px;
+            }
+
+            .panel_items > .item > .holder > .item:before {
+                content: '';
+                width: 25%;
+                height: 100%;
+                background: rgba(196, 196, 196, 0.7);
+                display: block;
+                transition: 0.2s;
+                position: absolute;
+                top: 0;
+                left: 100%;
+            }
+
+            .panel_items > .item > .holder > .item:hover:after {
+                top: 0;
+            }
+
+            .panel_items > .item > .holder > .item:hover:before {
+                left: -25%;
+            }
+
+a.tableEditButton,
+a.tableSeeButton {
+    display: block;
+    width: 100%;
+    height: 25px;
+    background: url("../Images/Icons/SVG/eye.svg") no-repeat 50% 50%;
+    background-size: 18%;
+    cursor: pointer;
+}
+
+.gal_table a.tableEditButton,
+.gal_table a.tableSeeButton {
+    height: 50px;
+    background-size: 20%;
+}
+
+a.tableEditButton {
+    background-image: url("../Images/Icons/SVG/edit.svg");
+}
+
+.table tr.unread {
+    background: rgba(255, 243, 107, 0.6);
+}
+
+.table th:last-child {
+    width: 100px;
+}
+
+.table.gal_table td > img {
+    height: 50px;
+    margin: auto;
+    display: block;
+}
+
+.table.gal_table td {
+    line-height: 50px !important;
+}
+
+.cke_maximized {
+    z-index: 999999 !important;
+}

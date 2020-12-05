@@ -1,0 +1,120 @@
+﻿@using Pezeshk.Models.Enum;
+<html>
+<head>
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/DashboardCSS")
+    @Scripts.Render("~/bundles/lib")
+    @Scripts.Render("~/bundles/Regex")
+</head>
+<body>
+    @{
+        AdminType accType = Identity.GetAdminType();
+    }
+    <div class="mypanel">
+        <div class="right hideMenu">
+            @Html.ActionLink("سایت", "Index", "Home", null, new { @class = "home_button" })
+
+            <section>
+                @Html.ActionLink("داشبورد", "Index", "Dashboard", null, new { @class = "dashboard" })
+
+                @if (accType == AdminType.FullAdmin)
+                {
+                    @Html.ActionLink("گالری", "Galleries", "Dashboard", null, new { @class = "gallery" })
+                    @Html.ActionLink("مقالات", "Posts", "Dashboard", null, new { @class = "blog" })
+                    @Html.ActionLink("دسته بندی ها", "Categories", "Dashboard", null, new { @class = "categories" })
+                    @Html.ActionLink("پیام ها", "Messages", "Dashboard", null, new { @class = "chat" })
+                    @Html.ActionLink("نظرات", "Comments", "Dashboard", null, new { @class = "comnt" })
+                    @Html.ActionLink("سوالات متداول", "FAQ", "Dashboard", null, new { @class = "faq" })
+                    @Html.ActionLink("مدیران", "Admins", "Dashboard", null, new { @class = "admins" })
+                }
+
+                else if (accType == AdminType.BlogManager)
+                {
+                    @Html.ActionLink("گالری", "Galleries", "Dashboard", null, new { @class = "gallery" })
+                    @Html.ActionLink("مقالات", "Posts", "Dashboard", null, new { @class = "blog" })
+                    @Html.ActionLink("نظرات", "Comments", "Dashboard", null, new { @class = "comnt" })
+                    @Html.ActionLink("دسته بندی ها", "Categories", null, "Dashboard", new { @class = "categories" })
+                }
+
+                else if (accType == AdminType.Secretary)
+                {
+                    @Html.ActionLink("پیام ها", "Messages", "Dashboard", null, new { @class = "chat" })
+                    @Html.ActionLink("نظرات", "Comments", "Dashboard", null, new { @class = "comnt" })
+                    @Html.ActionLink("سوالات متداول", "FAQ", "Dashboard", null, new { @class = "faq" })
+                }
+            </section>
+
+            <form action="/Account/Logout" id="logoutForm" method="post">
+                @Html.AntiForgeryToken()
+                <a class="exit_button" href="javascript:document.getElementById('logoutForm').submit()">خروج</a>
+            </form>
+        </div>
+
+        <div class="left">
+            <div class="header" id="left_header">
+                <div class="menu_res" onclick="ResMenuControl(true)"></div>
+                <div class="menu_res_close" onclick="ResMenuControl()"></div>
+                @if (accType != AdminType.BlogManager)
+                {
+                    <script>
+                        $.ajax({
+                            url: "/Api/Message/GetUnreadMessagesCount",
+                            method: "GET",
+                            success: (res) => {
+                                if (res != 0) {
+                                    let chat = $("<a>").addClass("chat").attr("href", "Dashboard/Messages").appendTo("#left_header.header");
+                                    let cc = $("<span>").addClass("chat_count").appendTo(chat);
+                                    if (res > 99) cc.html("99+");
+                                    else cc.html(res);
+                                }
+                            }
+                        });
+                    </script>
+                }
+            </div>
+            @RenderBody()
+        </div>
+    </div>
+
+    <script>
+        $(".left").scroll(() => {
+            let obj = $(".left > .header > a.chat, .newButton")
+
+            if ($(".left").scrollTop() > 40) obj.css("display", "none")
+            else obj.css("display", "block")
+        });
+        $(".mypanel > .right").scroll(() => {
+            let obj = $(".menu_res_close")
+
+            if ($(".mypanel > .right").scrollTop() > 0) obj.css("display", "none")
+            else obj.css("display", "block")
+        });
+
+        function ResMenuControl(mode) {
+            if (mode) {
+                $('.menu_res_close').css('display', 'block');
+                $('.menu_res').css('display', 'none');
+            }
+            else {
+                $('.menu_res_close').css('display', 'none');
+                $('.menu_res').css('display', 'block');
+            }
+            $('.mypanel > .right').toggleClass('hideMenu')
+        }
+
+        var actName = '@ViewContext.RouteData.Values["action"]';
+
+        if (actName == "Index") $(".dashboard").addClass("sel");
+        else if (actName == "Galleries") $(".gallery").addClass("sel");
+        else if (actName == "Posts") $(".blog").addClass("sel");
+        else if (actName == "Categories") $(".categories").addClass("sel");
+        else if (actName == "Comments") $(".comnt").addClass("sel");
+        else if (actName == "Messages") $(".chat").addClass("sel");
+        else if (actName == "FAQ") $(".faq").addClass("sel");
+        else if (actName == "Admins") $(".admins").addClass("sel");
+    </script>
+</body>
+</html>

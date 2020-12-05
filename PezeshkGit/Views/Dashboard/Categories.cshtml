@@ -1,0 +1,125 @@
+﻿@{
+    ViewBag.Title = "دسته بندی ها";
+    Layout = "~/Views/Shared/_Dashboard.cshtml";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="table-view">
+    <a class="newButton" onclick="addCat()"></a>
+    <table class="table table-bordered table-hover" id="cats">
+        <thead>
+            <tr>
+                <th>نام</th>
+                <th>تاریخ ثبت</th>
+                <th>مدیریت</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(() => {
+        $("#cats").DataTable({
+            "oLanguage": DataTableFA,
+            ajax: {
+                url: "/Api/Category",
+                dataSrc: ""
+            },
+            columns: [
+                {
+                    data: "title"
+                },
+                {
+                    data: "addDate"
+                },
+                {
+                    data: "title",
+                    render: function (data, type, cat) {
+                        return '<a class="tableEditButton" onclick="editCat(this, ' + cat.id + ')"></a>';
+                    }
+                }
+            ],
+            "order": [[0, "asc"]]
+        });
+    });
+
+    function editCat(ele, id) {
+        createModal($(ele).parents("tr").children("td:nth-child(1)").html(), () => {
+            if (Validator(this, $("#addTitleInp"))) {
+                $.ajax({
+                    url: "/Api/Category?id=" + id,
+                    method: "PUT",
+                    data: { ID: id, Title: $("#addTitleInp").val().trim(), AddDate: "" },
+                    success: () => { closeModal() }
+                });
+            }
+            else bootbox.alert("تمامی فیلد ها رو به درستی پر کنید.", () => { });
+        }, id);
+    }
+
+    function addCat() {
+        createModal("", () => {
+            if (Validator(this, $("#addTitleInp"))) {
+                $.ajax({
+                    url: "/Api/Category",
+                    method: "POST",
+                    data: { Title: $("#addTitleInp").val().trim() },
+                    success: () => { closeModal() }
+                });
+            }
+            else bootbox.alert("تمامی فیلد ها رو به درستی پر کنید.", () => { });
+        });
+    }
+
+    function createModal(strVal, callBack, id) {
+        let item_overlay = $("<div>").addClass("item_overlay").appendTo("body");
+        let show_item = $("<div>").addClass("show_item cat").appendTo("body");
+        let view_section = $("<div>").addClass("view-section").appendTo(show_item);
+
+        // InputBox
+        let inp_box1 = $("<div>").addClass("input_box").appendTo(view_section);
+        $("<label>").attr("for", "addTitleInp").html("نام").appendTo(inp_box1);
+        $("<input>").addClass("title").attr({
+            "type": "text", "placeholder": "نام دسته بندی را بنویسید",
+            "id": "addTitleInp",
+            "oninput": "Validator(this, 'title')"
+        }).val(strVal).appendTo(inp_box1).focus();
+
+        $("<input>").addClass("changeit_button").attr("type", "button").val("ثبت").on("click", () => {
+            callBack();
+        }).appendTo(view_section);
+
+        if (strVal != "") {
+            $("<input>").addClass("deleteit_button").attr("type", "button").val("حذف").on("click", () => {
+                bootbox.confirm({
+                    message: "از حذف دسته بندی مطمئنی؟",
+                    locale: "fa",
+                    callback: (result) => {
+                        if (result) {
+                            $.ajax({
+                                url: "/Api/Category?id=" + id,
+                                method: "DELETE",
+                                success: () => { closeModal() }
+                            });
+                        }
+                    }
+                });
+            }).appendTo(view_section);
+        }
+
+        $("<img>").addClass("close").attr("src", "../Content/Images/Icons/SVG/close.svg").appendTo(show_item).on("click", () => {
+            closeModal()
+        });
+        item_overlay.addClass("show");
+        show_item.addClass("show");
+    }
+
+    function closeModal() {
+        $(".show_item").removeClass("show");
+        $(".item_overlay").removeClass("show");
+        setTimeout(() => { $(".item_overlay").remove(); $(".show_item").remove() }, 1000);
+        $("#cats").DataTable().ajax.reload();
+    }
+</script>

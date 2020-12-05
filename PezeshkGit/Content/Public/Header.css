@@ -1,0 +1,207 @@
+﻿@font-face {
+    font-family: 'iran';
+    src: url('../../Fonts/Front/IRANSansWeb.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'ltravi';
+    src: url('../../Fonts/Front/LTRavi-Bold.otf') format('opentype');
+}
+
+* {
+    box-sizing: border-box;
+    outline: none;
+}
+
+body {
+    font-family: "iran";
+    text-align: right;
+    background: #fff;
+    font-size: 12px;
+    direction: rtl;
+    color: #000;
+    padding: 0;
+    margin: 0;
+}
+
+.auth_ok {
+    height: 50px;
+    line-height: 50px;
+    background: #00BCD4;
+    text-align: center;
+    padding-left: 10px;
+}
+
+    .auth_ok > a {
+        text-decoration: none;
+        color: #ccc;
+        background: rgb(0, 92, 104);
+        padding: 5px 15px;
+        border-radius: 5px;
+    }
+
+/*   Header   */
+#header {
+    border-top: 1px solid transparent;
+    height: 60px;
+}
+
+    #header > .holder {
+        width: 1300px;
+        height: 100%;
+        margin: auto;
+    }
+
+.menu {
+    font-family: "iran";
+    font-weight: 700;
+    list-style: none;
+    cursor: default;
+    width: 450px;
+    padding: 0;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+    .menu > li {
+        display: inline-block;
+        line-height: 60px;
+        text-align: center;
+        flex: 1;
+    }
+
+        .menu > li:first-child {
+            margin: 0 0 0 15px;
+        }
+
+        .menu > li:last-child {
+            margin: 0 15px 0 0;
+        }
+
+        .menu > li > a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            transition: 0.3s;
+            cursor: pointer;
+            color: #444;
+        }
+
+            .menu > li > a.sel,
+            .menu > li > a:hover {
+                color: #000;
+            }
+
+form#logoutForm {
+    float: left !important;
+}
+
+.menu_items {
+    font-family: "iran";
+    font-weight: 700;
+    list-style: none;
+    width: 100%;
+    padding: 0;
+    margin: 50px 0 0;
+}
+
+    .menu_items > li {
+        width: 100%;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        transition: 0.3s;
+    }
+
+        .menu_items > li:hover {
+            color: #000;
+            background: rgba(0, 0, 0, 0.1);
+            text-indent: 10px;
+        }
+
+        .menu_items > li > a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            transition: 0.3s;
+            cursor: pointer;
+            color: #444;
+        }
+
+.responsive_menu_open {
+    background: url("../Images/Icons/SVG/menu.svg") no-repeat 50% 50%;
+    width: 50px;
+    height: 50px;
+    background-size: 35px;
+    position: absolute;
+    top: 0;
+    right: 10px;
+    display: none;
+    cursor: pointer;
+}
+
+.responsive_menu_close {
+    background: url("../Images/Icons/SVG/close.svg") no-repeat 50% 50%;
+    width: 50px;
+    height: 50px;
+    background-size: 35px;
+    position: absolute;
+    top: 0;
+    right: 10px;
+    transition: 1s;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.responsive_menu {
+    position: fixed;
+    width: 50px;
+    height: 100vh;
+    z-index: 1000;
+    top: 0;
+    right: -60px;
+    background: rgba(255, 255, 255, 0.95);
+}
+
+@keyframes resCloseAnim {
+    0% {
+        width: 100%;
+        right: 0;
+        -webkit-animation-timing-function: ease-out;
+    }
+
+    50% {
+        width: 90px;
+        right: calc(100% - 90px);
+        -webkit-animation-timing-function: ease-in;
+    }
+
+    100% {
+        right: -100px;
+        width: 90px;
+        -webkit-animation-timing-function: ease-out;
+    }
+}
+
+@keyframes resOpenAnim {
+    0% {
+        right: -100px;
+        width: 90px;
+        -webkit-animation-timing-function: ease-out;
+    }
+
+    50% {
+        width: 90px;
+        right: calc(100% - 90px);
+        -webkit-animation-timing-function: ease-in;
+    }
+
+    100% {
+        width: 100%;
+        right: 0;
+        -webkit-animation-timing-function: ease-out;
+    }
+}

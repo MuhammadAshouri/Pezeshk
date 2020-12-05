@@ -1,0 +1,280 @@
+﻿@{
+    ViewBag.Title = "مقالات";
+    Layout = "~/Views/Shared/_Dashboard.cshtml";
+    var queryId = Request.QueryString["id"];
+}
+@Scripts.Render("~/bundles/ckeditor")
+
+<h2>@ViewBag.Title</h2>
+
+<div class="table-view">
+    <a class="newButton" onclick="addPost()"></a>
+    <table class="table table-bordered table-hover" id="posts">
+        <thead>
+            <tr>
+                <th>عنوان</th>
+                <th>دسته بندی</th>
+                <th>تاریخ انتشار</th>
+                <th>وضعیت</th>
+                <th>مدیریت</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(() => {
+        $("#posts").DataTable({
+            "oLanguage": DataTableFA,
+            ajax: {
+                url: "/Api/Post/GetPosts",
+                dataSrc: ""
+            },
+            columns: [
+                {
+                    data: "title",
+                    render: function (data, type, row) {
+                        return "<a style='text-decoration: none; color: #000' href='/Posts/View/" + row.id + "'>" + data + "</a>";
+                    }
+                },
+                {
+                    data: "categories",
+                    render: function (data, type, row) {
+                        data = data.replaceAll("،", "، ");
+                        if (data.length > 30) return data.substr(0, 30) + "...";
+                        else return data;
+                    }
+                },
+                {
+                    data: "postedOn"
+                },
+                {
+                    data: "published",
+                    render: function (data, type, message) {
+                        if (data == false) {
+                            return "منتشر نشده"
+                        }
+                        else return "منتشر شده"
+                    }
+                },
+                {
+                    render: function (data, type, post) {
+                        return "<a class='tableEditButton' onclick='editPost(" + post.id + ")'></a>";
+                    }
+                }
+            ],
+            "order": [[2, "desc"]]
+        });
+    });
+
+    function getSelectedCategories() {
+        let cats = "";
+        let inp = document.querySelectorAll("input.catBoxes:checked + label");
+        for (let i = 0; i < inp.length; i++) {
+            if (i + 1 == inp.length) cats += $(inp[i]).html();
+            else cats += $(inp[i]).html() + "،";
+        }
+        return cats;
+    }
+
+    function tagFixer() {
+        let str = $("#tagsInp").val().split('،');
+        let retVal = "";
+
+        for (var i in str) {
+        }
+        for (var i = 0; i < str.length; i++) {
+            retVal += str[i].trim();
+            if (i + 1 != str.length && str[i + 1].trim() != "") retVal += "،";
+        }
+
+        return retVal;
+    }
+
+    function editPost(id) {
+        createModal(true, () => {
+            if (validateInputs()) {
+                let formData = {
+                    ID: id,
+                    Title: $("#titleInp").val().trim(),
+                    Description: $("#desInp").val().trim(),
+                    Body: CKEDITOR.instances["rich-text-editor"].getData().trim(),
+                    Tags: tagFixer(),
+                    Published: $("#publishedInp").prop("checked"),
+                    Categories: getSelectedCategories()
+                };
+
+                $.ajax({
+                    url: "/Api/Post?id=" + id,
+                    method: "PUT",
+                    data: formData,
+                    success: () => { closeModal() }
+                });
+            }
+            else bootbox.alert("تمامی فیلد ها رو به درستی پر کنید.", () => { });
+        }, id);
+    }
+
+    function addPost() {
+        createModal(false, () => {
+            if (validateInputs()) {
+                let formData = {
+                    Title: $("#titleInp").val().trim(),
+                    Description: $("#desInp").val().trim(),
+                    Body: CKEDITOR.instances["rich-text-editor"].getData().trim(),
+                    Tags: tagFixer(),
+                    Published: $("#publishedInp").prop("checked"),
+                    Categories: getSelectedCategories()
+                };
+
+                $.ajax({
+                    url: "/Api/Post",
+                    method: "POST",
+                    data: formData,
+                    success: () => { closeModal() }
+                });
+            }
+            else bootbox.alert("تمامی فیلد ها رو به درستی پر کنید.", () => { });
+        });
+    }
+
+    async function createModal(mode, callBack, id) {
+        let item_overlay = $("<div>").addClass("item_overlay").appendTo("body");
+        let show_item = $("<div>").addClass("show_item post").appendTo("body");
+        let view_section = $("<div>").addClass("view-section").appendTo(show_item);
+
+        let values = { Title: "", Description: "", Tags: "", Categories: "", Published: false, Body: "" }
+
+        if (mode) {
+            await $.ajax({
+                url: "/Api/Post/GetPost?id=" + id,
+                success: (res) => {
+                    values.Title = res.title;
+                    values.Description = res.description;
+                    values.Tags = res.tags;
+                    values.Categories = res.categories;
+                    values.Published = res.published;
+                    values.Body = res.body;
+                }
+            });
+        }
+
+        let Categories;
+
+        await $.ajax({
+            url: "/Api/Category",
+            success: (res) => {
+                Categories = res;
+            }
+        });
+
+        // InputBox
+        let inp_box1 = $("<div>").addClass("input_box").appendTo(view_section);
+        $("<label>").attr("for", "titleInp").html("عنوان").appendTo(inp_box1);
+        $("<input>").addClass("title").attr({
+            "type": "text", "placeholder": "عنوان مقاله را بنویسید", "id": "titleInp", "oninput": "Validator(this, 'title2')"
+        }).val(values.Title).appendTo(inp_box1).focus();
+
+        // InputBox
+        let inp_box2 = $("<div>").addClass("input_box").appendTo(view_section);
+        $("<label>").attr("for", "desInp").html("توضیحات").appendTo(inp_box2);
+        $("<input>").addClass("des").attr({
+            "type": "text", "placeholder": "توضیحات مقاله را بنویسید", "id": "desInp", "oninput": "Validator(this, 'des')"
+        }).val(values.Description).appendTo(inp_box2);
+
+        // InputBox
+        let inp_box3 = $("<div>").addClass("input_box").appendTo(view_section);
+        $("<label>").attr("for", "tagsInp").html("برچسب ها").appendTo(inp_box3);
+        $("<input>").addClass("des").attr({
+            "type": "text", "placeholder": "برچسب های پست را با ، جدا کنید", "id": "tagsInp"
+        }).val(values.Tags).appendTo(inp_box3);
+
+        // InputBox
+        let inp_box4 = $("<div>").addClass("input_box radio_box cat_chbox").appendTo(view_section);
+        $("<label>").addClass("no-choice").html("دسته بندی ها").appendTo(inp_box4);
+        if (mode) {
+            let galCats = values.Categories.split("،");
+            for (var i = 0; i < Categories.length; i++) {
+                let chinp = $("<input>").attr({ "type": "checkbox", "id": "chbox" + (i + 1) })
+                    .addClass("catBoxes").appendTo(inp_box4);
+                if ($.inArray(Categories[i].title, galCats) != -1) chinp.prop("checked", true);
+                $("<label>").attr("for", "chbox" + (i + 1)).html(Categories[i].title).appendTo(inp_box4);
+            }
+        }
+        else {
+            for (var i = 0; i < Categories.length; i++) {
+                $("<input>").attr({ "type": "checkbox", "id": "chbox" + (i + 1) }).addClass("catBoxes").appendTo(inp_box4);
+                $("<label>").attr("for", "chbox" + (i + 1)).html(Categories[i].title).appendTo(inp_box4);
+            }
+        }
+
+        //InputBox
+        let inp_box5 = $("<div>").addClass("input_box radio_box just_one").appendTo(view_section);
+        let pubInp = $("<input>").attr({ "type": "checkbox", "id": "publishedInp" }).css("display", "none").appendTo(inp_box5);
+        if (mode) pubInp.prop("checked", values.Published);
+        $("<label>").attr("for", "publishedInp").html("نمایش در سایت").appendTo(inp_box5);
+
+        // InputBox
+        let inp_box6 = $("<div>").addClass("input_box").appendTo(view_section);
+        $("<label>").attr("for", "rich-text-editor").html("متن").appendTo(inp_box6);
+        $("<textarea>").attr("id", "rich-text-editor").appendTo(inp_box6);
+        CKEDITOR.replace("rich-text-editor", { language: "fa" });
+
+        if (mode) {
+            let thatcontent = "";
+            await $.ajax({
+                url: "/Api/Post/GetPostText?path=" + values.Body,
+                success: (res) => { thatcontent = res; }
+            });
+            thatcontent = thatcontent.replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&quot;", "'");
+            CKEDITOR.instances["rich-text-editor"].setData(thatcontent);
+        }
+
+        $("<input>").addClass("changeit_button").attr("type", "button").val("ثبت").on("click", callBack).appendTo(view_section);
+
+        if (mode) {
+            $("<input>").addClass("deleteit_button").attr("type", "button").val("حذف").on("click", () => {
+                bootbox.confirm({
+                    message: "از حذف مقاله مطمئنی؟",
+                    locale: "fa",
+                    callback: (result) => {
+                        if (result) {
+                            $.ajax({
+                                url: "/Api/Post?id=" + id,
+                                method: "DELETE",
+                                success: () => { closeModal() }
+                            });
+                        }
+                    }
+                });
+            }).appendTo(view_section);
+        }
+
+        $("<img>").addClass("close").attr("src", "../Content/Images/Icons/SVG/close.svg").appendTo(show_item).on("click", () => {
+            closeModal()
+        });
+        item_overlay.addClass("show");
+        show_item.addClass("show");
+    }
+
+    function validateInputs() {
+        if (Validator($("#titleInp"), "title2") && Validator($("#desInp"), "des") &&
+            CKEDITOR.instances["rich-text-editor"].getData().trim() != "" && getSelectedCategories() != "") return true;
+        return false;
+    }
+
+    function closeModal() {
+        $(".show_item").removeClass("show");
+        $(".item_overlay").removeClass("show");
+        setTimeout(() => { $(".item_overlay").remove(); $(".show_item").remove() }, 1000);
+        $("#posts").DataTable().ajax.reload();
+    }
+</script>
+
+@if (queryId != null)
+{
+    <script>
+        editPost(@queryId);
+    </script>
+}

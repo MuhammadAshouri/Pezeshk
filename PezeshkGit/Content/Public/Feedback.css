@@ -1,0 +1,177 @@
+﻿.feedback_section {
+    width: 1000px;
+    margin: 100px auto;
+    overflow: hidden;
+}
+
+    .feedback_section > .right {
+        width: 49%;
+        overflow: hidden;
+        float: right;
+    }
+
+        .feedback_section > .right > .title {
+            line-height: 35px;
+            font-size: 24px;
+            font-family: "iran";
+            font-weight: 700;
+        }
+
+        .feedback_section > .right > .line {
+            width: 100px;
+            margin: 20px 0;
+        }
+
+        .feedback_section > .right > .val_summery {
+            color: #ff4081;
+            font-size: 11px;
+            display: block;
+        }
+
+        .feedback_section > .right > textarea,
+        .feedback_section > .right > input {
+            border: 1px solid #aaa;
+            border-radius: 10px;
+            padding: 10px 15px;
+            display: block;
+            margin: 15px 0;
+            color: #aaa;
+            width: 48%;
+            float: right;
+        }
+
+            .feedback_section > .right > input.leftinp {
+                float: left;
+            }
+
+            .feedback_section > .right > textarea,
+            .feedback_section > .right > input.fullwidth {
+                max-width: 100%;
+                min-width: 100%;
+                width: 100%;
+            }
+
+        .feedback_section > .right > .button {
+            border: 1px solid #00BCD4;
+            border-radius: 9px;
+            text-align: center;
+            color: #00BCD4;
+            cursor: pointer;
+            padding: 10px;
+            width: 100px;
+            margin: 10px;
+            float: left;
+        }
+
+            .feedback_section > .right > .button.send {
+                background: #00BCD4;
+                color: #fff;
+            }
+
+    .feedback_section > .left {
+        float: left;
+        width: 49%;
+    }
+
+        .feedback_section > .left > img {
+            width: 100%;
+        }
+
+        .feedback_section > .left > .comments_holder {
+            width: 100%;
+            padding: 20px;
+        }
+
+    .feedback_section .comment_box {
+        margin: 10px 0;
+        width: 100%;
+        overflow: hidden;
+    }
+
+        .feedback_section .comment_box > .avatar {
+            width: 50px;
+            height: 40px;
+            float: right;
+            display: block;
+            background: url("../Images/Icons/SVG/accountBlue.svg") no-repeat 50% 50%;
+            background-size: 40px;
+            position: relative;
+        }
+
+        .feedback_section .comment_box > .content {
+            width: calc(100% - 50px);
+            height: 100%;
+            float: right;
+            padding-right: 10px;
+            position: relative;
+        }
+
+            .feedback_section .comment_box > .content:after {
+                content: '';
+                display: block;
+                position: absolute;
+                height: 100%;
+                top: 55px;
+                right: -24px;
+                border-right: 1px solid #ccc;
+            }
+
+            .feedback_section .comment_box > .content > span {
+                line-height: 23px;
+            }
+
+                .feedback_section .comment_box > .content > span.title {
+                    font-size: 16px;
+                    font-weight: 600;
+                    line-height: 30px;
+                    display: block;
+                }
+
+            .feedback_section .comment_box > .content > p {
+                border-top: 1px solid #ccc;
+                padding: 10px 0;
+            }
+
+            .feedback_section .comment_box > .content > .reply_it {
+                background: linear-gradient(60deg, #66bb6a, #43a047);
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+                font-family: "Vazir";
+                border-radius: 20px;
+                margin: 10px auto;
+                text-align: center;
+                line-height: 30px;
+                cursor: pointer;
+                font-size: 12px;
+                display: block;
+                border: 0 none;
+                width: 50%;
+            }
+
+            .feedback_section .comment_box > .content > .reply_box {
+                border: 1px solid #ff4081;
+                width: calc(100% - 15px);
+                float: left;
+                position: relative;
+                border-radius: 5px;
+                padding: 0 10px 5px;
+            }
+
+                .feedback_section .comment_box > .content > .reply_box:after {
+                    content: '';
+                    position: absolute;
+                    top: -15px;
+                    right: -15px;
+                    width: 15px;
+                    height: 30px;
+                    border-right: 1px solid #ff4081;
+                    border-bottom: 1px solid #ff4081;
+                    border-radius: 0 0 5px 0;
+                }
+
+                .feedback_section .comment_box > .content > .reply_box > .sender {
+                    font-weight: 600;
+                    border-bottom: 1px solid #ccc;
+                    display: block;
+                    line-height: 30px;
+                    margin-bottom: 10px;
+                }

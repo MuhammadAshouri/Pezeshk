@@ -1,0 +1,15 @@
+﻿.footer {
+    background: #001443;
+    position: relative;
+    height: 120px;
+}
+
+.menu.mfooter > li > a {
+    line-height: 120px;
+    color: #ccc !important;
+}
+
+    .menu.mfooter > li > a:hover,
+    .menu.mfooter > li > a.sel {
+        color: #fff !important;
+    }

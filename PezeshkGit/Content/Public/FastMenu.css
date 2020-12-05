@@ -1,0 +1,55 @@
+﻿.fast_menu {
+    border-radius: 16px;
+    margin: 0 auto 80px;
+    background: #eee;
+    padding: 50px 20px;
+    flex-wrap: wrap;
+    display: flex;
+    height: 160px;
+    width: 1200px;
+}
+
+        .fast_menu > div {
+            border-radius: 10px;
+            transition: 0.3s;
+            cursor: pointer;
+            margin: 0 10px;
+            flex: 1;
+        }
+
+            .fast_menu > div:hover > span:not(.icon):nth-child(2) {
+                color: #00BCD4;
+            }
+
+            .fast_menu > div > span:not(.icon) {
+                font-family: "iran";
+                font-weight: 600;
+                line-height: 20px;
+                transition: 0.3s;
+                font-size: 12px;
+                margin-top: 12px;
+                display: block;
+            }
+
+                .fast_menu > div > span:not(.icon):nth-child(3) {
+                    line-height: 25px;
+                    margin: 0;
+                }
+
+            .fast_menu > div > span.icon {
+                background: #fff;
+                border-radius: 9px;
+                display: block;
+                height: 50px;
+                margin: 10px;
+                float: right;
+                width: 50px;
+            }
+
+span.red {
+    color: #ff4081;
+}
+
+span.gray {
+    color: #B0B0B0;
+}

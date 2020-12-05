@@ -1,0 +1,137 @@
+﻿@{
+    ViewBag.Title = "درباره دکتر";
+}
+
+<div class="aboutpage">
+    <div class="left">
+        <img src="~/Content/Images/first.png" />
+    </div>
+    <div class="right">
+        <div class="first">
+            <span>درباره دکتر</span>
+            <h2>دکتر عسگری عباس زاده</h2>
+        </div>
+        <span>فوق تخصص جراحی پلاستیک، ترمیمی و زیبایی</span>
+        <ul>
+            <li>عضو رسمی جامعه جراحان ایران</li>
+            <li>گذراندن دوره تکمیلی لیزر در دبی</li>
+            <li>گذراندن دوره تکمیلی لیزر در دبی</li>
+            <li>گذراندن دوره تکمیلی لیزر در دبی</li>
+            <li>گذراندن دوره تکمیلی لیزر در دبی</li>
+            <li>گذراندن دوره تکمیلی لیزر در دبی</li>
+            <li>گذراندن دوره تکمیلی لیزر در دبی</li>
+            <li>گذراندن دوره تکمیلی لیزر در دبی</li>
+            <li>گذراندن دوره تکمیلی لیزر در دبی</li>
+            <li>گذراندن دوره تکمیلی لیزر در دبی</li>
+            <li>گذراندن دوره تکمیلی لیزر در دبی</li>
+        </ul>
+    </div>
+</div>
+
+<div class="aboutGallery">
+    <h2 class="title">گالری تصاویر</h2>
+    <span class="line"></span>
+    <p class="des">تصویر مدارک ،تقدیر نامه ها و همایش هایی که دکتر شرکت کرد</p>
+    <a href="~/Gallery">
+        اطلاعات بیشتر
+        <div class="flesh_box">
+            <span class="line"></span>
+        </div>
+    </a>
+
+    <div class="splide inabout notMounted" id="gall_slider" style="margin-bottom: 0">
+        <div class="splide__track">
+            <ul class="splide__list" id="gal_items">
+                <li class="splide__slide">
+                    <div class="loading_pic">
+                        <img src="~/Content/Images/Icons/SVG/loading.svg" />
+                    </div>
+                </li>
+                <li class="splide__slide">
+                    <div class="loading_pic">
+                        <img src="~/Content/Images/Icons/SVG/loading.svg" />
+                    </div>
+                </li>
+                <li class="splide__slide">
+                    <div class="loading_pic">
+                        <img src="~/Content/Images/Icons/SVG/loading.svg" />
+                    </div>
+                </li>
+                <li class="splide__slide">
+                    <div class="loading_pic">
+                        <img src="~/Content/Images/Icons/SVG/loading.svg" />
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(() => {
+        let splide = new Splide('#gall_slider', {
+            gap: "10px",
+            type: 'loop',
+            perPage: 4,
+            direction: 'rtl',
+            perMove: 1,
+            pagination: false
+        });
+
+        let canSplide = true;
+        function resizeSlider() {
+            if (window.matchMedia("(min-width: 1100px)").matches) {
+                splide.options = { perPage: 4 };
+                canSplide = false;
+            }
+            if (window.matchMedia("(max-width: 1100px)").matches) splide.options = { perPage: 3 };
+            if (window.matchMedia("(max-width: 800px)").matches) splide.options = { perPage: 2 };
+            if (window.matchMedia("(max-width: 500px)").matches) splide.options = { perPage: 1 };
+        }
+        resizeSlider();
+
+        //Get Gallery
+        $.ajax({
+            url: "/Api/Gallery/GetTopGalleries?count=8",
+            method: "GET",
+            contentType: "application/JSON",
+            success: (res) => {
+                for (var i = 0; i < res.length; i++) {
+                    let mydiv = document.querySelectorAll("#gal_items > .splide__slide")[i];
+                    $(mydiv).children(".loading_pic").remove();
+                    $("<img>").attr("src", "/Content/Images/Uploads/Thumb/200/" + res[i].url).appendTo(mydiv);
+                    $("<span>").addClass("title").html(res[i].title).appendTo(mydiv);
+                    $("<span>").addClass("hide").html(res[i].description).appendTo(mydiv);
+                    let anc = $("<a>").html("بیشتر").appendTo(mydiv).on("click", () => { showItem(mydiv) });
+                    let flesh = $("<div>").addClass("flesh_box").appendTo(anc);
+                    $("<span>").addClass("line").appendTo(flesh);
+                }
+                if (canSplide) {
+                    $(".splide").removeClass("notMounted");
+                    splide.mount();
+                }
+                $(window).resize(() => { resizeSlider() });
+            }
+        });
+
+        function showItem(ele) {
+            let item = $(ele);
+
+            let item_overlay = $("<div>").addClass("item_overlay").appendTo("body");
+            let show_item = $("<div>").addClass("show_item").appendTo("body");
+            $("<img>").addClass("close").attr("src", "../../Content/Images/Icons/SVG/close.svg").appendTo(show_item).on("click", () => {
+                show_item.removeClass("show");
+                item_overlay.removeClass("show");
+                setTimeout(() => { item_overlay.remove(); show_item.remove() }, 1000);
+            });
+            $("<img>").addClass("gal_image").attr("src", item.children("img").attr("src").replace("Thumb/200/", "Full/")).appendTo(show_item);
+            let text_box = $("<div>").addClass("textBox").appendTo(show_item);
+            $("<span>").addClass("title").html(item.children(".title").html()).appendTo(text_box);
+            $("<p>").addClass("des").html(item.children(".hide").html()).appendTo(text_box);
+            setTimeout(() => {
+                item_overlay.addClass("show");
+                show_item.addClass("show");
+            }, 100);
+        }
+    });
+</script>

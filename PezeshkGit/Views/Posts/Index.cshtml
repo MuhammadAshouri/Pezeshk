@@ -1,0 +1,82 @@
+﻿@model Pezeshk.Models.ViewModels.PostListViewModel
+@{
+    ViewBag.Title = "مقالات";
+}
+
+<div class="post_section jplist_section">
+    <div class="controls">
+        <div style="display: none"
+             data-jplist-control="hidden-sort" data-group="group1" data-path=".date" data-order="desc" data-type="text">
+        </div>
+
+        <div class="category">
+            <input type="radio" id="showAllInp"
+                   data-jplist-control="radio-buttons-path-filter"
+                   data-path="" data-group="group1" data-name="name1" name="cats" checked="checked" />
+            <label for="showAllInp">نمایش همه</label>
+            @foreach (var item in Model.Categories)
+            {
+                <input type="radio" id="@item.ID"
+                       data-jplist-control="radio-buttons-path-filter"
+                       data-group="group1" data-name="name1" data-path=".@item.Title" name="cats" />
+                <label for="@item.ID">@item.Title</label>
+            }
+        </div>
+
+        <div data-jplist-control="pagination" class="mypagination twoInp"
+             data-group="group1" data-items-per-page="8" data-current-page="0" data-name="pagination1">
+
+            <button class="pageButton" type="button" data-type="first">«</button>
+            <button class="pageButton" type="button" data-type="prev">‹</button>
+
+            <div class="jplist-holder" data-type="pages">
+                <button class="pageButton" type="button" data-type="page">{pageNumber}</button>
+            </div>
+
+            <button class="pageButton" type="button" data-type="next">›</button>
+            <button class="pageButton" type="button" data-type="last">»</button>
+
+            <div data-type="items-per-page-dd" class="jplist-dd">
+                <div data-type="panel" class="jplist-dd-panel">تعداد مقاله در صفحه</div>
+
+                <div data-type="content" class="jplist-dd-content">
+                    <div class="jplist-dd-item" data-value="8">8 تا در هر صفحه</div>
+                    <div class="jplist-dd-item" data-value="16">16 تا در هر صفحه</div>
+                    <div class="jplist-dd-item" data-value="32">32 تا در هر صفحه</div>
+                    <div class="jplist-dd-item" data-value="64">64 تا در هر صفحه</div>
+                    <div class="jplist-dd-item" data-value="0">نمایش همه</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text_filter twoInp">
+            <input data-jplist-control="textbox-filter" data-group="group1" data-name="my-filter-1" data-path=".title"
+                   type="text" value="" data-clear-btn-id="name-clear-btn" placeholder="جستجو در عنوان" />
+            <input data-jplist-control="textbox-filter" data-group="group1" data-name="my-filter-1" data-path=".des"
+                   type="text" value="" data-clear-btn-id="name-clear-btn" placeholder="جستجو در متن" />
+        </div>
+    </div>
+
+    <div data-jplist-group="group1" class="content">
+        @foreach (var item in Model.Posts)
+        {
+            <div data-jplist-item class="items">
+                @{
+                    var allCats = "";
+                    foreach (var i in item.Categories.Split('،'))
+                    {
+                        allCats += i + " ";
+                    }
+                }
+                <a href="../Posts/View/@item.ID" class="title @allCats">@item.Title</a>
+                <span class="des">@item.Description</span>
+                <span class="time">زمان انتشار: <span class="date">@item.PostedOn.Split(' ')[0]</span></span>
+            </div>
+        }
+        <div data-jplist-control="no-results" data-group="group1" data-name="no-results">مقاله ای یافت نشد!</div>
+    </div>
+</div>
+
+<script>
+    jplist.init();
+</script>

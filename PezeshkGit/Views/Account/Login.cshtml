@@ -1,0 +1,38 @@
+﻿@using Pezeshk.Models.ViewModels
+@model LoginViewModel
+@{
+    ViewBag.Title = "ورود";
+}
+
+<script>
+    $(document).ready(() => {
+        $("#footer").remove();
+    });
+</script>
+
+@Scripts.Render("~/bundles/Regex")
+
+@using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <div id="form1" class="login">
+        <div class="header">ورود به سایت</div>
+        
+        @if (ViewBag.LoginError != null)
+        {
+            <span class="error_message">@ViewBag.LoginError</span>
+        }
+
+        <div class="input_box">
+            @Html.LabelFor(m => m.Username)
+            @Html.TextBoxFor(m => m.Username, new { @oninput = "Validator(this, 'uname');", @placeholder = "نام کاربری خود را وارد کنید" })
+        </div>
+        <div class="input_box pass_box">
+            @Html.LabelFor(m => m.Password)
+            @Html.PasswordFor(m => m.Password, new { @placeholder = "گذرواژه خود را وارد کنید" })
+            @Html.ActionLink("رمز خود را فراموش کرده اید؟", "ForgotPassword", null, new { @class = "pass_forgot" })
+        </div>
+
+        <input class="submit_button" type="submit" id="sub_but" value="ورود" />
+    </div>
+}

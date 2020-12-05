@@ -1,0 +1,338 @@
+﻿@model Pezeshk.Models.Post
+@{
+    ViewBag.Title = Model.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var queryId = Request.QueryString["comment"];
+}
+
+@section metas{
+    <meta name="description" content="@Model.Description" />
+    <meta name="keywords" content='@Model.Tags.Replace("،",", ")' />
+}
+
+@if (Identity.IsAuthenticated())
+{
+    @Scripts.Render("~/bundles/Regex")
+    <script>
+        async function showMessage(id) {
+            let item_overlay = $("<div>").addClass("item_overlay").appendTo("body");
+            let show_item = $("<div>").addClass("show_item post").appendTo("body");
+            let view_section = $("<div>").addClass("view-section").appendTo(show_item);
+
+            let values = { FullName: "", Title: "", Content: "", Time: "", ShowInSite: false, ReadState: false, Email: "", ReplyText: "" }
+
+            await $.ajax({
+                url: "/Api/Comment?id=" + id,
+                success: (res) => {
+                    values.FullName = res.fullName;
+                    values.Title = res.title;
+                    values.Content = res.content;
+                    values.Time = res.time;
+                    values.ShowInSite = res.showInSite;
+                    values.ReadState = res.readState;
+                    values.Email = res.email;
+                    values.ReplyText = res.replyText;
+                    if (!res.readState) {
+                        $.ajax({
+                            url: "/Api/Comment/UpdateReadState?id=" + id,
+                            method: "PUT",
+                            success: () => { console.log("نظر خوانده شد.") }
+                        });
+                    }
+                }
+            });
+
+            $("<span>").addClass("title").html("<strong>عنوان:</strong> " + values.Title).appendTo(view_section);
+            $("<span>").addClass("fullname").html("<strong>نام و نام خانوادگی:</strong> " + values.FullName).appendTo(view_section);
+            $("<span>").addClass("email").html("<strong>ایمیل ارسال کننده:</strong> " + values.Email).appendTo(view_section);
+            $("<span>").addClass("time").html("<strong>تاریخ:</strong> " + values.Time).appendTo(view_section);
+            $("<textarea>").prop("readonly", true).val(values.Content).appendTo(view_section);
+
+            //InputBox
+            let inp_box = $("<div>").addClass("input_box radio_box just_one").appendTo(view_section);
+            $("<input>").attr({ "type": "checkbox", "id": "pubInp" }).css("display", "none")
+                .prop("checked", values.ShowInSite).on("change", () => {
+                    $.ajax({
+                        url: "/Api/Comment/UpdateShowInSite?id=" + id,
+                        method: "PUT",
+                        success: () => { console.log("نظر منتشر شد.") }
+                    });
+                }).appendTo(inp_box);
+            $("<label>").attr("for", "pubInp").html("نمایش در سایت").appendTo(inp_box);
+
+            if (values.ReplyText == "") $("<div>").addClass("send-button").html("ارسال پاسخ")
+                .on("click", () => {
+                    let anc = $("div.send-button");
+                    anc.removeClass("send-button").addClass("send-form").html("");
+
+                    $("<label>").attr("for", "content-input").html("متن پاسخ").appendTo(anc);
+                    let contentTextArea = $("<textarea>").attr({
+                        "placeholder": "متن پاسخ را وارد کن....", "id": "content-input", "oninput": "Validator(this, 'faq_ans')"
+                    }).appendTo(anc);
+
+                    let buttonHolder = $("<div>").addClass("button-holder");
+                    $("<div>").addClass("send-form-button").html("ارسال").on("click", () => {
+                        closeModal();
+                        bootbox.confirm({
+                            message: "از ارسال پاسخ مطمئنی؟",
+                            locale: "fa",
+                            callback: (result) => {
+                                if (result) {
+                                    var html = "";
+                                    var lines = contentTextArea.val().split('\n');
+                                    for (var i = 0; i < lines.length; i++) {
+                                        html += lines[i] + "<br />";
+                                    }
+                                    $.ajax({
+                                        url: "/Api/Comment/ReplyMessage?id=" + id,
+                                        method: "POST",
+                                        data: { Content: html, MailTo: values.Email },
+                                        success: () => { closeModal() }
+                                    });
+                                }
+                            }
+                        });
+                    }).appendTo(buttonHolder);
+
+                    $("<div>").addClass("return-button").html("لغو").on("click", () => {
+                        anc.html("ارسال پاسخ").removeClass("send-form").addClass("send-button");
+                        buttonHolder.remove();
+                    }).appendTo(buttonHolder);
+
+                    anc.parent().append(buttonHolder);
+                }).appendTo(view_section);
+
+            else $("<div>").addClass("send-form").html("پاسخ:<br />" + values.ReplyText.replaceAll("<br />", "\n"))
+                .appendTo(view_section).css("height", "auto");
+
+            $("<img>").addClass("close").attr("src", "../../Content/Images/Icons/SVG/close.svg").appendTo(show_item).on("click", () => {
+                closeModal()
+            });
+            item_overlay.addClass("show");
+            show_item.addClass("show");
+        }
+
+        function closeModal() {
+            $(".show_item").removeClass("show");
+            $(".item_overlay").removeClass("show");
+            setTimeout(() => { $(".item_overlay").remove(); $(".show_item").remove() }, 1000);
+        }
+    </script>
+    if (queryId != null && queryId.IsInt())
+    {
+        <script>
+            showMessage(@queryId);
+        </script>
+    }
+}
+
+<div id="contentSection">
+    <h1>@Model.Title</h1>
+
+    <div class="textArea"></div>
+</div>
+
+<div class="feedback_section">
+    <div class="right">
+        <h2 class="title">لطفا سوالات، تجربیات و نظرات خود را با ما به اشتراک بگذارید</h2>
+        <span class="line"></span>
+        <span class="val_summery">پرکردن تمام بخش ها اجباری میباشد</span>
+
+        <input type="text" class="nameinp" oninput="Validator(this, 'fullname')" placeholder="نام و نام خانوادگی" />
+        <input type="text" class="emailinp leftinp" oninput="Validator(this, 'email1')" placeholder="آدرس ایمیل" />
+        <input type="text" class="titleinp fullwidth" oninput="Validator(this, 'title1')" placeholder="عنوان" />
+        <textarea oninput="Validator(this, 'messageText')" placeholder="متن پیام..." style="min-height: 150px;"></textarea>
+        <span class="messageTextRemain" style="color: #aaa">0/300</span>
+
+        <div class="button reset" onclick="clearForm()">شروع مجدد</div>
+        <div class="button send" onclick="sendMessage()">ارسال</div>
+    </div>
+    <div class="left">
+        <div class="comments_holder"></div>
+    </div>
+</div>
+
+<div class="other_section">
+    <h2 class="title">
+        <svg width="28" height="24" viewBox="0 0 28 24">
+            <g transform="translate(-796 -1594)">
+                <circle cx="12" cy="12" r="12" transform="translate(800 1594)" fill="#00bcd4" />
+                <circle cx="5" cy="5" r="5" transform="translate(796 1594)" fill="#00bcd4" />
+                <circle cx="12" cy="12" r="12" transform="translate(800 1594)" fill="#00bcd4" />
+            </g>
+        </svg>
+        مقاله های جدید
+    </h2>
+    <p class="des">توضیحات درج شوند</p>
+    <div class="splide notMounted" id="post_slider">
+        <div class="splide__track">
+            <ul class="splide__list" id="post_items">
+                <li class="splide__slide">
+                    <div class="loading_pic">
+                        <img src="~/Content/Images/Icons/SVG/loading.svg" />
+                    </div>
+                </li>
+                <li class="splide__slide">
+                    <div class="loading_pic">
+                        <img src="~/Content/Images/Icons/SVG/loading.svg" />
+                    </div>
+                </li>
+                <li class="splide__slide">
+                    <div class="loading_pic">
+                        <img src="~/Content/Images/Icons/SVG/loading.svg" />
+                    </div>
+                </li>
+                <li class="splide__slide">
+                    <div class="loading_pic">
+                        <img src="~/Content/Images/Icons/SVG/loading.svg" />
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    let thatcontent = `@File.ReadAllText(HttpContext.Current.Server.MapPath("~" + Model.Body)) `;
+    thatcontent = thatcontent.replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&quot;", "'");
+    $(".textArea").append(thatcontent);
+
+    let splide = new Splide('#post_slider', {
+        gap: "20px",
+        type: 'loop',
+        perPage: 4,
+        direction: 'rtl',
+        perMove: 1,
+        pagination: false
+    });
+    let canSplide = true;
+
+    function resizeSlider() {
+        if (window.matchMedia("(min-width: 1100px)").matches) {
+            splide.options = { perPage: 4 };
+            canSplide = false;
+        }
+        if (window.matchMedia("(max-width: 1100px)").matches) splide.options = { perPage: 3 }
+        if (window.matchMedia("(max-width: 800px)").matches) splide.options = { perPage: 2 }
+        if (window.matchMedia("(max-width: 500px)").matches) splide.options = { perPage: 1 }
+    }
+    resizeSlider();
+
+    // Get Posts
+    $.ajax({
+        url: "/Api/Post/GetTopPosts?count=4",
+        method: "GET",
+        contentType: "application/JSON",
+        success: (res) => {
+            for (var i = 0; i < res.length; i++) {
+                let mydiv = document.querySelectorAll("#post_items > .splide__slide")[i];
+                $(mydiv).children(".loading_pic").remove();
+                $("<span>").addClass("title").html(res[i].title).appendTo(mydiv);
+                $("<span>").addClass("line").appendTo(mydiv);
+                $("<p>").addClass("content").html(res[i].description).appendTo(mydiv);
+                let anc = $("<a>").attr("href", res[i].id).html("ادامه").appendTo(mydiv);
+                let flesh = $("<div>").addClass("flesh_box").appendTo(anc);
+                $("<span>").addClass("line").appendTo(flesh);
+            }
+            if (canSplide) {
+                $(".splide").removeClass("notMounted");
+                splide.mount();
+            }
+            $(window).resize(() => { resizeSlider() });
+        }
+    });
+
+    function clearForm() {
+        let item = $(".feedback_section > .right");
+        let cssObj = { "color": "#aaa", "border-color": "#aaa" };
+        item.children("input.nameinp").val("").css(cssObj);
+        item.children("input.emailinp").val("").css(cssObj);
+        item.children("input.titleinp").val("").css(cssObj);
+        item.children("textarea").val("").css(cssObj);
+    }
+    clearForm();
+
+    function sendMessage() {
+        let item = $(".feedback_section > .right");
+        let fullname = item.children("input.nameinp");
+        let email = item.children("input.emailinp");
+        let title = item.children("input.titleinp");
+        let content = item.children("textarea");
+
+        let obj = {
+            fullName: fullname.val().trim(),
+            title: title.val().trim(),
+            content: content.val().trim(),
+            email: email.val().trim(),
+            post_ID: @Model.ID,
+        }
+
+        if (Validator(fullname, "fullname") && Validator(email, "email1")
+            && Validator(title, "title1") && Validator(content, "messageText")) {
+            $.ajax({
+                url: "/Api/Comment",
+                method: "POST",
+                data: obj,
+                beforeSend: () => {
+                    $(".button.send").html("...");
+                },
+                success: () => {
+                    clearForm();
+                    $(".button.send").html("ارسال");
+                    bootbox.alert("نظر شما ارسال شد و در صورت تایید در سایت نمایش داده خواهد شد.");
+                }
+            });
+        }
+        else bootbox.alert("تمامی فیلد ها رو به درستی پر کنید.", () => { });
+    }
+
+    let stepp = 0;
+    async function fillComments() {
+        let comCount = 0;
+        await $.ajax({
+            url: "/Api/Comment/GetCommentsCountForShow?postId=@Model.ID",
+            success: (res) => {
+                comCount = res;
+            }
+        });
+        let i;
+        await $.ajax({
+            url: `/Api/Comment/GetCommentsForShow?postId=@Model.ID&start=${stepp}`,
+            success: (res) => {
+                i = res;
+            }
+        });
+
+        for (let j = 0; j < i.length; j++) {
+            let comment_box = $("<div>").addClass("comment_box").appendTo(".comments_holder");
+            $("<div>").addClass("avatar").appendTo(comment_box);
+            let content = $("<div>").addClass("content").appendTo(comment_box);
+            $("<span>").addClass("title").html(i[j].title).appendTo(content);
+            $("<span>").addClass("sender").html(i[j].fullName).appendTo(content);
+
+            if ("@Identity.IsAuthenticated()" == "True") {
+                $("<span>").addClass("email").html(" - " + i[j].email).appendTo(content);
+                $("<p>").addClass("content").html(i[j].content).appendTo(content);
+
+                if (i[j].replyText == "") $("<div>").addClass("reply_it").html("پاسخ")
+                    .on("click", () => { showMessage(i[j].id, content) }).appendTo(content);
+            }
+            else $("<p>").addClass("content").html(i[j].content).appendTo(content);
+
+            if (i[j].replyText != "") {
+                let reply_box = $("<div>").addClass("reply_box").appendTo(content);
+                $("<span>").addClass("sender").html("مدیر سایت").appendTo(reply_box);
+                $("<p>").addClass("content").html(i[j].replyText.replaceAll("<br />", "\n")).appendTo(reply_box);
+            }
+
+            if (j + 1 == i.length && $(".comments_holder").children().length < comCount)
+                $("<div>").addClass("showMore").html("نمایش بیشتر")
+                    .css({ "color": "#00BCD4", "cursor": "pointer" }).on("click", () => {
+                        stepp++;
+                        $(".showMore").remove();
+                        fillComments();
+                    }).appendTo(".comments_holder");
+        }
+    }
+    fillComments();
+</script>

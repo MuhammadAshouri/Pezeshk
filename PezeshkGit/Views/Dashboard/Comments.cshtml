@@ -1,0 +1,88 @@
+﻿@{
+    ViewBag.Title = "نظرات";
+    Layout = "~/Views/Shared/_Dashboard.cshtml";
+    var queryId = Request.QueryString["id"];
+}
+
+@if (queryId != null && queryId.IsInt())
+{
+    <script>
+        showMessage(@queryId);
+    </script>
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="table-view">
+    <table class="table table-bordered table-hover" id="comments">
+        <thead>
+            <tr>
+                <th>عنوان</th>
+                <th>متن پیام</th>
+                <th>ارسال کننده</th>
+                <th>تاریخ</th>
+                <th>وضعیت</th>
+                <th>مشاهده</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(() => {
+        $("#comments").DataTable({
+            "oLanguage": DataTableFA,
+            ajax: {
+                url: "/Api/Comment/GetComments",
+                dataSrc: ""
+            },
+            columns: [
+                {
+                    data: "title",
+                    render: function (data, type, row) {
+                        if (data.length > 30) return data.substr(0, 30) + "...";
+                        else return data;
+                    }
+                },
+                {
+                    data: "content",
+                    render: function (data, type, row) {
+                        if (data.length > 30) return data.substr(0, 30) + "...";
+                        else return data;
+                    }
+                },
+                {
+                    data: "email"
+                },
+                {
+                    data: "time"
+                },
+                {
+                    render: function (data, type, message) {
+                        if (message.readState == false) {
+                            return "خوانده نشده"
+                        }
+                        else return "خوانده شده"
+                    }
+                },
+                {
+                    data: "post_ID",
+                    render: function (data, type, comment) {
+                        return "<a class='tableSeeButton' href='/Posts/View/" + data + "?comment=" + comment.id + "'></a>";
+                    }
+                }
+            ],
+            "order": [[4, "desc"], [3, "desc"]],
+            "initComplete": function (settings, json) {
+                let items = $("tr > td:nth-child(5)");
+
+                for (var i = 0; i < items.length; i++) {
+                    if ($(items[i]).html() == "خوانده نشده") {
+                        $(items[i]).parent("tr").addClass("unread");
+                    }
+                }
+            }
+        });
+    });
+</script>

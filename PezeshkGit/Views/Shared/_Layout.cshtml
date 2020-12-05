@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/lib")
+    @Styles.Render("~/Content/jplist")
+    @Scripts.Render("~/bundles/jplist")
+    @{
+        var CurrentUrl = Request.Url.AbsolutePath.ToLower();
+    }
+    @if (CurrentUrl.Contains("/posts/view/"))
+    {
+        @RenderSection("metas");
+    }
+</head>
+<body>
+    @if (Identity.IsAuthenticated())
+    {
+        <div class="auth_ok">
+            <span>خوش آمدید</span>
+            @Html.ActionLink("ورود به پنل کاربری", "Index", "Dashboard")
+        </div>
+    }
+
+    <div id="header">
+        <div class="holder">
+            <ul class="menu">
+                <li>@Html.ActionLink("صفحه اصلی", "Index", "Home")</li>
+                <li>@Html.ActionLink("گالری تصاویر", "Index", "Gallery")</li>
+                <li>@Html.ActionLink("مقالات", "Index", "Posts")</li>
+                @if (CurrentUrl == "/home/index" || CurrentUrl == "/")
+                {
+                    <li><a onclick="GoToReserve()">نوبت دهی</a></li>
+                }
+                else
+                {
+                    <li>@Html.ActionLink("نوبت دهی", "Index", "Home", new { @goto = "reserve" }, null)</li>
+                }
+                <li>@Html.ActionLink("پرسش و پاسخ", "Index", "FAQ")</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="responsive_menu_open" onclick="resToggle(true)"></div>
+    <div class="responsive_menu">
+        <div class="responsive_menu_close" onclick="resToggle(false)"></div>
+        <ul class="menu_items">
+            <li>@Html.ActionLink("صفحه اصلی", "Index", "Home")</li>
+            <li>@Html.ActionLink("گالری تصاویر", "Index", "Gallery")</li>
+            <li>@Html.ActionLink("مقالات", "Index", "Posts")</li>
+            @if (CurrentUrl == "/home/index" || CurrentUrl == "/")
+            {
+                <li><a onclick="GoToReserve()">نوبت دهی</a></li>
+            }
+            else
+            {
+                <li>@Html.ActionLink("نوبت دهی", "Index", "Home", new { @goto = "reserve" }, null)</li>
+            }
+            <li>@Html.ActionLink("پرسش و پاسخ", "Index", "FAQ")</li>
+        </ul>
+    </div>
+
+    <div id="content">
+        @if (!CurrentUrl.Contains("manage") && !CurrentUrl.Contains("about") && !CurrentUrl.Contains("account"))
+        {
+            <div class="about_section">
+                <div class="right">
+                    <img src="~/Content/Images/first.png" />
+                </div>
+                <div class="left">
+                    <div class="first">
+                        <span>درباره دکتر</span>
+                        <h2>دکتر عسگری عباس زاده</h2>
+                    </div>
+                    <span>فوق تخصص جراحی پلاستیک، ترمیمی و زیبایی</span>
+                    <ul>
+                        <li>عضو رسمی جامعه جراحان ایران</li>
+                        <li>گذراندن دوره تکمیلی لیزر در دبی</li>
+                    </ul>
+                    <a href="~/Home/About">
+                        خواندن اطلاعات بیشتر
+                        <div class="flesh_box">
+                            <span class="line"></span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        }
+
+        @RenderBody()
+    </div>
+
+    <div id="footer" class="footer">
+        <ul class="menu mfooter">
+            <li>@Html.ActionLink("صفحه اصلی", "Index", "Home")</li>
+            <li>@Html.ActionLink("گالری تصاویر", "Index", "Gallery")</li>
+            <li>@Html.ActionLink("مقالات", "Index", "Posts")</li>
+            @if (CurrentUrl == "/home/index" || CurrentUrl == "/")
+            {
+                <li><a onclick="GoToReserve()">نوبت دهی</a></li>
+            }
+            else
+            {
+                <li>@Html.ActionLink("نوبت دهی", "Index", "Home", new { @goto = "reserve" }, null)</li>
+            }
+            <li>@Html.ActionLink("پرسش و پاسخ", "Index", "FAQ")</li>
+        </ul>
+    </div>
+
+    <script>
+        function resToggle(open) {
+            if (open) {
+                $('.responsive_menu').css('animation', 'resOpenAnim 0.5s forwards');
+                $('.responsive_menu_open').animate({ opacity: '0' }, "0.3");
+            }
+            else {
+                $('.responsive_menu').css('animation', 'resCloseAnim 0.5s forwards');
+                $('.responsive_menu_open').animate({ opacity: '1' }, "0.3");
+            }
+        }
+
+        if (new URLSearchParams(window.location.search).get("goto") == "reserve") GoToReserve();
+
+        function GoToReserve() {
+            $([document.documentElement, document.body]).animate({
+                scrollTop: $('#reserveBox').offset().top
+            }, 1500);
+        }
+
+        let anc = ".menu > li:nth-child(";
+        let path = "@CurrentUrl";
+
+        if (path == "/") $(anc + "1) > a").addClass("sel");
+        else if (path == "/gallery") $(anc + "2) > a").addClass("sel");
+        else if (path == "/posts" || path.includes("/posts/view")) $(anc + "3) > a").addClass("sel");
+        else if (path == "/faq") $(anc + "5) > a").addClass("sel");
+    </script>
+</body>
+</html>

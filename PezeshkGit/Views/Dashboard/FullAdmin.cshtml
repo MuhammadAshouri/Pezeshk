@@ -1,0 +1,205 @@
+﻿@{
+    ViewBag.Title = "داشبورد";
+    Layout = "~/Views/Shared/_Dashboard.cshtml";
+}
+
+<div class="panel_items">
+    <div class="item">
+        <h4>پیام های خوانده نشده</h4>
+
+        <table class="table table-bordered table-hover" id="messages">
+            <thead>
+                <tr>
+                    <th>عنوان</th>
+                    <th>ارسال کننده</th>
+                    <th>تاریخ</th>
+                    <th>مشاهده</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div class="item">
+        <h4>نظرات خوانده نشده</h4>
+
+        <table class="table table-bordered table-hover" id="comments">
+            <thead>
+                <tr>
+                    <th>عنوان</th>
+                    <th>ارسال کننده</th>
+                    <th>تاریخ</th>
+                    <th>مشاهده</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div class="item">
+        <h4>مقالات منتشر شده اخیر</h4>
+
+        <table class="table table-bordered table-hover" id="posts">
+            <thead>
+                <tr>
+                    <th>عنوان</th>
+                    <th>دسته بندی</th>
+                    <th>تاریخ انتشار</th>
+                    <th>مدیریت</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div class="item">
+        <h4>عکس های اخیر گالری</h4>
+
+        <div class="holder gall">
+            <a class="item">
+                <div class="loading_pic">
+                    <img src="~/Content/Images/Icons/SVG/loading.svg" />
+                </div>
+            </a>
+            <a class="item">
+                <div class="loading_pic">
+                    <img src="~/Content/Images/Icons/SVG/loading.svg" />
+                </div>
+            </a>
+            <a class="item">
+                <div class="loading_pic">
+                    <img src="~/Content/Images/Icons/SVG/loading.svg" />
+                </div>
+            </a>
+            <a class="item">
+                <div class="loading_pic">
+                    <img src="~/Content/Images/Icons/SVG/loading.svg" />
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style id="pageStyle"></style>
+<script>
+    $(document).ready(() => {
+        $("#messages").DataTable({
+            "lengthMenu": [3, 6, 12],
+            "oLanguage": DataTableFA,
+            ajax: {
+                url: "Api/Message/GetUnreadMessages",
+                dataSrc: ""
+            },
+            columns: [
+                {
+                    data: "title",
+                    render: function (data, type, row) {
+                        if (data.length > 20) return data.substr(0, 20) + "...";
+                        else return data;
+                    }
+                },
+                {
+                    data: "email",
+                    render: function (data, type, row) {
+                        if (data.length > 25) return data.substr(0, 25) + "...";
+                        else return data;
+                    }
+                },
+                {
+                    data: "time"
+                },
+                {
+                    render: (data, type, message) => {
+                        return "<a class='tableSeeButton' href='/Dashboard/Messages?id=" + message.id + "'></a>";
+                    }
+                }
+            ],
+            "order": [[2, "desc"]]
+        });
+
+        $("#comments").DataTable({
+            "lengthMenu": [3, 6, 12],
+            "oLanguage": DataTableFA,
+            ajax: {
+                url: "Api/Comment/GetUnreadComments",
+                dataSrc: ""
+            },
+            columns: [
+                {
+                    data: "title",
+                    render: function (data, type, row) {
+                        if (data.length > 20) return data.substr(0, 20) + "...";
+                        else return data;
+                    }
+                },
+                {
+                    data: "email",
+                    render: function (data, type, row) {
+                        if (data.length > 25) return data.substr(0, 25) + "...";
+                        else return data;
+                    }
+                },
+                {
+                    data: "time"
+                },
+                {
+                    data: "post_ID",
+                    render: (data, type, comment) => {
+                        return "<a class='tableSeeButton' href='/Posts/View/" + data + "?comment=" + comment.id + "'></a>";
+                    }
+                }
+            ],
+            "order": [[2, "desc"]]
+        });
+
+        $("#posts").DataTable({
+            "lengthMenu": [4],
+            "oLanguage": DataTableFA,
+            ajax: {
+                url: "Api/Post/GetTopPosts?count=4",
+                dataSrc: ""
+            },
+            columns: [
+                {
+                    data: "title",
+                    render: function (data, type, row) {
+                        return "<a style='text-decoration: none; color: #000' href='/Posts/View/" + row.id + "'>" + data + "</a>";
+                    }
+                },
+                {
+                    data: "categories",
+                    render: function (data, type, row) {
+                        data = data.replaceAll("،", "، ");
+                        if (data.length > 30) return data.substr(0, 30) + "...";
+                        else return data;
+                    }
+                },
+                {
+                    data: "postedOn"
+                },
+                {
+                    render: function (data, type, post) {
+                        return "<a class='tableEditButton' href='/Dashboard/Posts?id=" + post.id + "'></a>";
+                    }
+                }
+            ],
+            "order": [[2, "desc"]]
+        });
+
+        // Append Gallery
+        $.ajax({
+            url: "/Api/Gallery/GetTopGalleries?count=4",
+            method: "GET",
+            contentType: "application/JSON",
+            success: (res) => {
+                for (var i = 0; i < res.length; i++) {
+                    let myanc = document.querySelectorAll(".holder.gall > .item")[i];
+                    $(myanc).attr("href", "/Dashboard/Galleries?id=" + res[i].id);
+                    $(myanc).children(".loading_pic").remove();
+                    $(myanc).css("background", "url('/Content/Images/Uploads/Thumb/200/" + res[i].url + "') no-repeat 50% 50%");
+                    $("#pageStyle").append(".holder.gall > .item:nth-child(" + (i + 1) + "):after{content: '" + res[i].title + "';}");
+                }
+            }
+        });
+    });
+</script>
