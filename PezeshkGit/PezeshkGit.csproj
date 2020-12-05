@@ -555,6 +555,7 @@
     <Content Include="Content\Images\Icons\user.png" />
     <Content Include="Content\Images\Icons\users.png" />
     <Content Include="Content\Images\Icons\vector.png" />
+    <Content Include="Content\Images\screenshot.png" />
     <Content Include="Content\Images\Uploads\Full\1399\06\13_13_33_53_END2X-edited.png" />
     <Content Include="Content\Images\Uploads\Full\1399\06\13_13_34_6_END2X-edited2.png" />
     <Content Include="Content\Images\Uploads\Full\1399\06\14_18_58_16_logo.png" />
