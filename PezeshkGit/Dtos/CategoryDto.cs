@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Pezeshk.Dtos
+namespace PezeshkGit.Dtos
 {
     public class CategoryDto
     {

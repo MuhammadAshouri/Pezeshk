@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Pezeshk.Models.ViewModels
+namespace PezeshkGit.Models.ViewModels
 {
     public class PostListViewModel
     {

@@ -1,7 +1,7 @@
-﻿using Pezeshk.Models.Enum;
+﻿using PezeshkGit.Models.Enum;
 using System.ComponentModel.DataAnnotations;
 
-namespace Pezeshk.Dtos
+namespace PezeshkGit.Dtos
 {
     public class AdminDto
     {

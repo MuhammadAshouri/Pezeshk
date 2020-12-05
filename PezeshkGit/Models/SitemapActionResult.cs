@@ -2,7 +2,7 @@
 using System.Web.Mvc;
 using System.Xml;
 
-namespace Pezeshk.Models
+namespace PezeshkGit.Models
 {
     public class SitemapActionResult : ActionResult
     {

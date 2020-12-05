@@ -1,4 +1,4 @@
-﻿namespace Pezeshk.Models.Enum
+﻿namespace PezeshkGit.Models.Enum
 {
     public enum AdminType
     {

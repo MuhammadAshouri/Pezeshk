@@ -1,7 +1,7 @@
-﻿using Pezeshk.Models.Enum;
+﻿using PezeshkGit.Models.Enum;
 using System.Web.Mvc;
 
-namespace Pezeshk.Controllers
+namespace PezeshkGit.Controllers
 {
     [Authorize]
     public class DashboardController : Controller

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Pezeshk.Models
+namespace PezeshkGit.Models
 {
     public class Comment
     {

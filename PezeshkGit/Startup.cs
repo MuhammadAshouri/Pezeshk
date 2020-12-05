@@ -5,7 +5,7 @@ using Owin;
 using System.Security.Claims;
 using System.Web.Helpers;
 
-namespace Pezeshk
+namespace PezeshkGit
 {
     public partial class Startup
     {

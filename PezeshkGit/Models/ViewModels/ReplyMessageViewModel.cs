@@ -1,4 +1,4 @@
-﻿namespace Pezeshk.Models.ViewModels
+﻿namespace PezeshkGit.Models.ViewModels
 {
     public class ReplyMessageViewModel
     {

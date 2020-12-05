@@ -1,7 +1,7 @@
-﻿using Pezeshk.Models;
+﻿using PezeshkGit.Models;
 using System.Data.Entity;
 
-namespace Pezeshk.Data
+namespace PezeshkGit.Data
 {
     public class ApplicationDbContext : DbContext
     {

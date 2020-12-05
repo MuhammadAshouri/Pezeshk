@@ -1,11 +1,11 @@
-﻿using Pezeshk.Data;
-using Pezeshk.Models;
+﻿using PezeshkGit.Data;
+using PezeshkGit.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 
-namespace Pezeshk.Controllers
+namespace PezeshkGit.Controllers
 {
     public class SitemapController : Controller
     {

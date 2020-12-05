@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using log4net;
-using Pezeshk.Data;
-using Pezeshk.Dtos;
-using Pezeshk.Models;
+using PezeshkGit.Data;
+using PezeshkGit.Dtos;
+using PezeshkGit.Models;
 using System.Linq;
 using System.Web.Http;
 
-namespace Pezeshk.Controllers.Api
+namespace PezeshkGit.Controllers.Api
 {
     [Authorize]
     public class CategoryController : ApiController

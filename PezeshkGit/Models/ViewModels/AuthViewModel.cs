@@ -1,8 +1,8 @@
-﻿using Pezeshk.Models.Enum;
+﻿using PezeshkGit.Models.Enum;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Pezeshk.Models.ViewModels
+namespace PezeshkGit.Models.ViewModels
 {
     public class LoginViewModel
     {

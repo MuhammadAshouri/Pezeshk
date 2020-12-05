@@ -1,4 +1,4 @@
-﻿namespace Pezeshk.Migrations
+﻿namespace PezeshkGit.Migrations
 {
     using System;
     using System.Data.Entity.Migrations;

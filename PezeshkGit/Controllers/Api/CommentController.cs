@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using log4net;
-using Pezeshk.Data;
-using Pezeshk.Dtos;
-using Pezeshk.Models;
-using Pezeshk.Models.ViewModels;
+using PezeshkGit.Data;
+using PezeshkGit.Dtos;
+using PezeshkGit.Models;
+using PezeshkGit.Models.ViewModels;
 using System;
 using System.Data.Entity;
 using System.Linq;
@@ -11,7 +11,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Web.Http;
 
-namespace Pezeshk.Controllers.Api
+namespace PezeshkGit.Controllers.Api
 {
     [Authorize]
     public class CommentController : ApiController

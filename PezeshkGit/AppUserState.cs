@@ -1,7 +1,7 @@
-﻿using Pezeshk.Models;
-using Pezeshk.Models.Enum;
+﻿using PezeshkGit.Models;
+using PezeshkGit.Models.Enum;
 
-namespace Pezeshk
+namespace PezeshkGit
 {
     public class AppUserState
     {

@@ -3,7 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Web;
 
-namespace Pezeshk
+namespace PezeshkGit
 {
     /// <summary>
     /// Summary description for ImageUploader

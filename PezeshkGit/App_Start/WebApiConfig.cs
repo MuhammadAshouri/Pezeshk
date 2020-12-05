@@ -2,7 +2,7 @@
 using System.Web.Http;
 using System.Web.Mvc;
 
-namespace Pezeshk
+namespace PezeshkGit
 {
     public static class WebApiConfig
     {

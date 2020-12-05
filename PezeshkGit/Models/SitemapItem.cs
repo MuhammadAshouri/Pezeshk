@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pezeshk.Models
+namespace PezeshkGit.Models
 {
     public class SitemapItem
     {

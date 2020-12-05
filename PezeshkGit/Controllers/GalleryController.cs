@@ -1,9 +1,9 @@
-﻿using Pezeshk.Data;
-using Pezeshk.Models.ViewModels;
+﻿using PezeshkGit.Data;
+using PezeshkGit.Models.ViewModels;
 using System.Linq;
 using System.Web.Mvc;
 
-namespace Pezeshk.Controllers
+namespace PezeshkGit.Controllers
 {
     public class GalleryController : Controller
     {

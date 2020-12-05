@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Pezeshk.Dtos;
-using Pezeshk.Models;
+using PezeshkGit.Dtos;
+using PezeshkGit.Models;
 
-namespace Pezeshk.App_Start
+namespace PezeshkGit.App_Start
 {
     public class MappingProfile : Profile
     {

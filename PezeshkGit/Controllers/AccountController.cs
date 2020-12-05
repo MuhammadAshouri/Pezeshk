@@ -1,8 +1,8 @@
 ﻿using log4net;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
-using Pezeshk.Data;
-using Pezeshk.Models.ViewModels;
+using PezeshkGit.Data;
+using PezeshkGit.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -13,7 +13,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace Pezeshk.Controllers
+namespace PezeshkGit.Controllers
 {
     [Authorize]
     public class AccountController : Controller

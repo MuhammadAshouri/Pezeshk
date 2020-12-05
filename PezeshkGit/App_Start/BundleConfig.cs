@@ -1,6 +1,6 @@
 ﻿using System.Web.Optimization;
 
-namespace Pezeshk
+namespace PezeshkGit
 {
     public class BundleConfig
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Pezeshk.Models
+namespace PezeshkGit.Models
 {
     public class Category
     {

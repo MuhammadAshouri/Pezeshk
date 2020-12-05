@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
 
-namespace Pezeshk.Dtos
+namespace PezeshkGit.Dtos
 {
     public class PostDto
     {

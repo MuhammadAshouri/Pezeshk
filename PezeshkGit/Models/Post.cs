@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 
-namespace Pezeshk.Models
+namespace PezeshkGit.Models
 {
     public class Post
     {

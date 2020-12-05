@@ -1,4 +1,4 @@
-﻿namespace Pezeshk.Dtos
+﻿namespace PezeshkGit.Dtos
 {
     public class GalleryDto
     {

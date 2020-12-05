@@ -1,12 +1,12 @@
-﻿using Pezeshk.Data;
-using Pezeshk.Models.ViewModels;
+﻿using PezeshkGit.Data;
+using PezeshkGit.Models.ViewModels;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
-namespace Pezeshk.Controllers
+namespace PezeshkGit.Controllers
 {
     public class PostsController : Controller
     {

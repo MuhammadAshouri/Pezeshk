@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using log4net;
 using log4net.Config;
-using Pezeshk.App_Start;
+using PezeshkGit.App_Start;
 using System;
 using System.Net;
 using System.Web;
@@ -10,7 +10,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 
-namespace Pezeshk
+namespace PezeshkGit
 {
     public class MvcApplication : HttpApplication
     {
